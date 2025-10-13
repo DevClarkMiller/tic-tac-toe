@@ -10,8 +10,8 @@ const Grid = () => {
     const { grid } = useContext(GridContext);
 
     return (
-        <div className='container' id='grid'>
-            { grid?.map((row, index) => <Row key={index} row={row} index={index} />) }
+        <div className='container gap-1 w-100' id='grid'>
+            { grid?.map((values, row) => <Row key={row} values={values} row={row} />) }
         </div>
     );
 };

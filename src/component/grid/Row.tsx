@@ -1,14 +1,14 @@
 import Cell from "./Cell";
 
 export interface RowProps {
-    row: number[];
-    index: number;
+    values: number[];
+    row: number;
 }
 
-const Row = ({ row, index }: RowProps) => {
+const Row = ({ values, row }: RowProps) => {
     return (
-        <div className="row">{
-            row.map((col, colIndex) => <Cell key={`${index}-${colIndex}`} value={col} index={index} />)    
+        <div className="row gap">{
+            values.map((value, col) => <Cell key={`${row}-${col}`} value={value} row={row} col={col} />)    
         }</div>
     );
 }
