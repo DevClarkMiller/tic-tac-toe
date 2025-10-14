@@ -1,30 +1,30 @@
 import { useMemo, createContext, type ReactNode, useState } from 'react';
 
 // HELPERS
-import { createGrid } from '../helpers/GridHelper';
+import { CellState, Game } from '../helpers/GameHelper';
 
 export interface GridContextType {
-    grid: number[][];
+    game: Game;
     onCellClick: (row: number, col: number) => void;
 } 
 
 export const GridContext = createContext<GridContextType>({} as GridContextType);
 
 export const GridContextProvider = ({ children }: { children: ReactNode }) => {
-    const [grid, setGrid] = useState<number[][]>(createGrid(3, 3));
+    const [game, setGame] = useState<Game>(new Game(3, 3));
     
     const onCellClick = (row: number, col: number) => {
-        const gridCpy = [...grid];
-        gridCpy[row][col] = 0;
-        setGrid(gridCpy);
+        const newGame = game.Clone();
+        newGame.MakeMove(row, col, CellState.Cross);
+        setGame(newGame);
     } 
     
     const value = useMemo(() => {
         return  {
-            grid: grid,
+            game: game,
             onCellClick: onCellClick
         };
-    }, [grid, onCellClick]);
+    }, [game, onCellClick]);
 
     return (
         <GridContext.Provider value={value}>

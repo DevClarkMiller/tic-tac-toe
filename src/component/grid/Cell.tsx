@@ -1,11 +1,14 @@
 import { useContext, useMemo } from "react";
 import { GridContext } from "../../context/GridContext";
 
+// HELPERS
+import { CellState } from "../../helpers/GameHelper";
+
 // ICONS
 import { RxCross1, RxCircle  } from "react-icons/rx";
 
 export interface CellProps {
-    value: number;
+    value: CellState;
     row: number;
     col: number;
 }
@@ -15,9 +18,9 @@ const Cell = ({ value, row, col }: CellProps) => {
 
     const text = useMemo(() => {
         switch (value) {
-            case -1: return '';
-            case 0: return <RxCross1 className="fs-1"/>;
-            case 1: return <RxCircle className="fs-1"/>;
+            case CellState.Empty: return '';
+            case CellState.Cross: return <RxCross1 className="fs-1"/>;
+            case CellState.Circle: return <RxCircle className="fs-1"/>;
         };
     }, [value]);
 

@@ -12,10 +12,11 @@ import Grid from './component/grid/Grid';
 import { GridContextProvider } from './context/GridContext';
 
 const App = () => {
-
+  
   return (
     <GridContextProvider>
       <div className='w-100 h-100'>
+        <h1>Tic-Tac-Toe</h1>
         <Grid />
       </div>
     </GridContextProvider>

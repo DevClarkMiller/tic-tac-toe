@@ -59,7 +59,14 @@ export default defineConfig([
       'react/self-closing-comp': 'warn',
       'react/jsx-sort-props': 'warn',
       'react/jsx-one-expression-per-line': 'off',
-      'react/prop-types': 'off'
+      'react/prop-types': 'off',
+      "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "method",
+        "format": ["PascalCase"]
+      }
+    ]
     }
   },
 ]);

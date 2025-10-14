@@ -7,11 +7,11 @@ import { GridContext } from '../../context/GridContext';
 import Row from './Row';
 
 const Grid = () => {
-    const { grid } = useContext(GridContext);
+    const { game } = useContext(GridContext);
 
     return (
         <div className='container w-100 h-100 p-0' id='grid'>
-            { grid?.map((values, row) => (
+            { game.Grid?.map((values, row) => (
                 <Row 
                     key={row} 
                     values={values} 

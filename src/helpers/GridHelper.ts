@@ -1,5 +1,5 @@
-export const createGrid = (nRows: number, nCols: number): number[][] => {
+export const createGrid = <T>(nRows: number, nCols: number, defaultValue: T): T[][] => {
     return Array.from({ length: nRows}, () => 
-        Array.from({ length: nCols }, () => -1)
+        Array.from({ length: nCols }, () => defaultValue)
     );
 };
