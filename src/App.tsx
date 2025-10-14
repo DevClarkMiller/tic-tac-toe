@@ -15,7 +15,9 @@ const App = () => {
 
   return (
     <GridContextProvider>
-      <Grid />
+      <div className='w-100 h-100'>
+        <Grid />
+      </div>
     </GridContextProvider>
   )
 }

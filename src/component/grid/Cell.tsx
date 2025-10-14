@@ -1,6 +1,9 @@
 import { useContext, useMemo } from "react";
 import { GridContext } from "../../context/GridContext";
 
+// ICONS
+import { RxCross1, RxCircle  } from "react-icons/rx";
+
 export interface CellProps {
     value: number;
     row: number;
@@ -13,18 +16,20 @@ const Cell = ({ value, row, col }: CellProps) => {
     const text = useMemo(() => {
         switch (value) {
             case -1: return '';
-            case 0: return 'X';
+            case 0: return <RxCross1 className="fs-1"/>;
+            case 1: return <RxCircle className="fs-1"/>;
         };
     }, [value]);
 
     return (
-        <div className="col-sm p-0">
+        <div className="col-sm p-0" style={{width: '150px'}}>
             <button 
-                className="card btn btn-secondary w-100 h-100 text-center border-1 shadow-sm m-0 p-5"
+                className="card btn btn-secondary w-100 h-100 text-center border-1 shadow-sm m-0 p-0"
+                style={{aspectRatio: '1 / 1', overflow: "hidden"}}
                 onClick={() => onCellClick(row, col)}
             >
-                <div className="card-body p-0">
-                    <h5 className="card-title np-0 m-0">{text}</h5>
+                <div className="card-body p-0 d-flex align-items-center justify-content-center">
+                    <h5 className="card-title p-0 m-0 text-center">{text}</h5>
                 </div>
             </button>
         </div>
