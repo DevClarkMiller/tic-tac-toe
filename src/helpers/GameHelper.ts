@@ -1,10 +1,8 @@
 import { createGrid } from "./GridHelper";
 
-// export const CellState = Object.freeze({
-//     Empty: -1, 
-//     Cross: 0, 
-//     Circle: 1
-// });
+interface IMemento {
+    Serialize(): unknown;
+}
 
 export enum CellState {
     Empty = -1, Cross, Circle
@@ -20,6 +18,19 @@ export class Coord {
     }
 }
 
+export const getOppositePlayer = (player: CellState) => {
+    if (player == CellState.Cross) return CellState.Circle;
+    return CellState.Cross;
+};
+
+// const DIRS = [[-1, 0], [1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+const DIRS_WITH_COMPLIMENTS = [
+    [[1, 0], [-1, 0]],
+    [[0, 1], [0, -1]],
+    [[1, 1], [-1, -1]],
+    [[-1, 1], [1, -1]]
+];
+
 export class Game {
     private _rows: number;
     private _cols: number;
@@ -27,12 +38,15 @@ export class Game {
     private _isGameOver: boolean;
     private _activePlayer: CellState;
 
+    private _scores: Map<CellState, number>;
+
     public constructor(rows: number, cols: number, grid?: CellState[][]) {
         this._grid = grid != null ? this.CopyGrid(grid) : createGrid(rows, cols, -1);
         this._rows = rows;
         this._cols = cols;
         this._isGameOver = false;
         this._activePlayer = CellState.Cross;
+        this._scores = new Map<CellState, number>();
     }
 
     public get Grid() { return this._grid; }
@@ -41,31 +55,159 @@ export class Game {
     public get Cols() { return this._cols; }
 
     public get IsGameOver() { return this._isGameOver; }
+    public set IsGameOver(val: boolean) { this._isGameOver = val; }
 
     public get ActivePlayer() { return this._activePlayer; }
+    public set ActivePlayer(val: CellState) { this._activePlayer = val; }
+
+    private InitScore(player: CellState) {
+        if (!this._scores.has(player)) this._scores.set(player, 0);
+    }
+
+    public GetScore(player: CellState) {
+        this.InitScore(player);
+        return this._scores.get(player);
+    }
+
+    public SetScore(player: CellState, value: number) {
+        this._scores.set(player, value);
+    }
 
     private CopyGrid(grid: number[][]) {
         return grid.map(row => [...row]);
     }
 
     public Clone() {
-        return new Game(this._rows, this._cols, this._grid);
+        const newGame = new Game(this._rows, this._cols, this._grid);
+        newGame.ActivePlayer = this._activePlayer;
+        newGame.IsGameOver = this._isGameOver;
+        return newGame;
+    }
+
+    private CountAlignedCells = (x: number, y: number, xMod: number, yMod: number, cell: CellState) => {
+        const ROWS = 3;
+        const COLS = 3;
+        const RANGE = 2;
+
+        let matchCnt = 0;
+
+        x += xMod;
+        y += yMod;
+        
+        for (let i = 0; i < RANGE; i++) {
+            // stop if out of bounds
+            if (x < 0 || x >= COLS || y < 0 || y >= ROWS) break;
+
+            // count if matching, else stop
+            if (this._grid[y][x] === cell) matchCnt++;
+            else break;
+
+            // move again in the same direction
+            x += xMod;
+            y += yMod;
+        }
+
+        return matchCnt;
+    }
+
+    // TODO: MAKE MORE EFFICIENT
+    private CellHasWon(x: number, y: number) {
+        const NUM_ALIGNED_TO_WIN = 3;
+
+        const cell = this._grid[y][x];
+        if (cell === CellState.Empty) return false;
+        // CHECK EACH DIRECTION BY THE GIVEN RANGE
+        for (const dirWithCompliment of DIRS_WITH_COMPLIMENTS) {
+            let matchCnt = 1;
+            for (const dir of dirWithCompliment) {
+                matchCnt += this.CountAlignedCells(x, y, dir[0], dir[1], cell);
+            }
+
+            if (matchCnt >= NUM_ALIGNED_TO_WIN) return true;
+        }
+
+        return false;
+    }
+
+    private CheckForEnd() {
+        // Check each direction for a win, if win game over
+        for (let row = 0; row < this._rows; row++) {
+            for (let col = 0; col < this._cols; col++) {
+                if (this.CellHasWon(col, row)) return true;
+            }
+        }
+        // If the number of possible moves is 0 and there's no winner, game over
+        return this.GetPossibleMoves().size == 0;
     }
     
-    public MakeMove(row: number, col: number, value: CellState) {
+    public MakeMove(coord: Coord) {
+        const row = coord.y;
+        const col = coord.x;
         if (this._grid[row][col] === CellState.Empty)
-            this._grid[row][col] = value;
+            this._grid[row][col] = this._activePlayer;
+
+        if (this.CheckForEnd()) { 
+            this._isGameOver = true;
+            this.InitScore(this._activePlayer);
+            const currScore = this._scores.get(this._activePlayer); 
+            this._scores.set(this._activePlayer, (currScore as number) + 1); 
+        }
+        this._activePlayer = getOppositePlayer(this._activePlayer);
     }
 
     public GetPossibleMoves() {
-        const moves = new Set<Coord>(); // A set of pairs which are really just arrays with a size of two
+        const moves = new Set<Coord>();
 
-        this._grid.forEach((cols, row) => {
-            cols.forEach((state, col) => {
-                if (state == CellState.Empty) moves.add(new Coord(col, row));
-            });
-        });
+        for (let r = 0; r < this.Rows; r++) {
+            for (let c = 0; c < this.Cols; c++) {
+                if (this._grid[r][c] == CellState.Empty) moves.add(new Coord(c, r));
+            }
+        }
 
         return moves;
+    }
+
+    static Memento = class implements IMemento {
+        public Rows: number;
+        public Cols: number;
+        public Grid: CellState[][];
+        public IsGameOver: boolean;
+        public ActivePlayer: CellState;
+        public Scores: Map<CellState, number>;
+
+        public constructor(rows: number, cols: number, grid: CellState[][], isGameOver: boolean, activePlayer: CellState, scores: Map<CellState, number>) {
+            this.Rows = rows;
+            this.Cols = cols;
+            this.Grid = grid;
+            this.IsGameOver = isGameOver;
+            this.ActivePlayer = activePlayer;
+            this.Scores = scores;
+        }
+
+        public Serialize(): unknown {
+            return {
+                rows: this.Rows,
+                cols: this.Cols,
+                grid: this.Grid,
+                isGameOver: this.IsGameOver,
+                activePlayer: this.ActivePlayer
+            };
+        }
+    }
+
+    public GetState(): IMemento {
+        const gridCpy = this._grid.map(row => [...row]);
+
+        const memento = new Game.Memento(this._rows, this._cols, gridCpy, this._isGameOver, this._activePlayer, this._scores);
+        return memento;
+    }
+
+    public SetState(memento: IMemento) {
+        if (!(memento instanceof Game.Memento)) return;
+        this._rows = memento.Rows;
+        this._cols = memento.Cols;
+        this._grid = memento.Grid;
+        this._isGameOver = memento.IsGameOver;
+        this._activePlayer = memento.ActivePlayer;
     }
 };
