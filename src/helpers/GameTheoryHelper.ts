@@ -1,7 +1,8 @@
 import { CellState, Game, Coord } from "./GameHelper";
 
 export const evaluate = (game: Game, maximizingSym: CellState) => {
-    return 0;
+    const score = game.CalculateScoreAndWinner(maximizingSym).score;
+    return score;
 };
 
 export interface MinMaxResult {
@@ -14,7 +15,6 @@ export const minmax = (game: Game, depth: number, maximizingPlayer: boolean, max
         return { move: null, eval: evaluate(game, maximizingSym) };
 
     const possibleMoves = game.GetPossibleMoves();
-    console.log(possibleMoves);
 
     if (possibleMoves.size === 0)
         return { move: null, eval: evaluate(game, maximizingSym) };
@@ -55,11 +55,11 @@ export const minmax = (game: Game, depth: number, maximizingPlayer: boolean, max
 };
 
 export const determineMove = (game: Game): Promise<Coord | null> => {
-  const DEPTH = 1;
+  const DEPTH = 3;
   return new Promise(resolve => {
     setTimeout(() => {
-      const { move } = minmax(game.Clone(), DEPTH, true, CellState.Circle);
-      resolve(move);
+      const value = minmax(game.Clone(), DEPTH, true, CellState.Circle);
+      resolve(value.move);
     }, 0);
   });
 };

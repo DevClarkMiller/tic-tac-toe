@@ -8,6 +8,18 @@ export enum CellState {
     Empty = -1, Cross, Circle
 }
 
+export const cellStateName = (val: CellState) => {
+    switch (val) {
+        case CellState.Empty: return 'Empty';
+        case CellState.Circle: return 'Circle';
+        case CellState.Cross: return 'Cross';
+    }
+}
+
+export const isPlayer = (val: CellState) => {
+    return val != CellState.Empty;
+}
+
 export class Coord {
     public x: number;
     public y: number;
@@ -37,6 +49,7 @@ export class Game {
     private _grid: CellState[][];
     private _isGameOver: boolean;
     private _activePlayer: CellState;
+    private _gameStarted: boolean;
 
     private _scores: Map<CellState, number>;
 
@@ -47,6 +60,7 @@ export class Game {
         this._isGameOver = false;
         this._activePlayer = CellState.Cross;
         this._scores = new Map<CellState, number>();
+        this._gameStarted = false;
     }
 
     public get Grid() { return this._grid; }
@@ -60,13 +74,16 @@ export class Game {
     public get ActivePlayer() { return this._activePlayer; }
     public set ActivePlayer(val: CellState) { this._activePlayer = val; }
 
+    public get GameStarted() { return this._gameStarted; }
+    public set GameStarted(val: boolean) { this._gameStarted = val; }
+
     private InitScore(player: CellState) {
         if (!this._scores.has(player)) this._scores.set(player, 0);
     }
 
-    public GetScore(player: CellState) {
+    public GetScore(player: CellState): number {
         this.InitScore(player);
-        return this._scores.get(player);
+        return this._scores.get(player) as number;
     }
 
     public SetScore(player: CellState, value: number) {
@@ -84,7 +101,7 @@ export class Game {
         return newGame;
     }
 
-    private CountAlignedCells = (x: number, y: number, xMod: number, yMod: number, cell: CellState) => {
+    private NumAlignedCells = (x: number, y: number, xMod: number, yMod: number, cell: CellState) => {
         const ROWS = 3;
         const COLS = 3;
         const RANGE = 2;
@@ -111,31 +128,38 @@ export class Game {
     }
 
     // TODO: MAKE MORE EFFICIENT
-    private CellHasWon(x: number, y: number) {
+    private CheckCellWin(x: number, y: number) {
         const NUM_ALIGNED_TO_WIN = 3;
 
         const cell = this._grid[y][x];
         if (cell === CellState.Empty) return false;
         // CHECK EACH DIRECTION BY THE GIVEN RANGE
         for (const dirWithCompliment of DIRS_WITH_COMPLIMENTS) {
-            let matchCnt = 1;
+            let alignedCnt = 1;
             for (const dir of dirWithCompliment) {
-                matchCnt += this.CountAlignedCells(x, y, dir[0], dir[1], cell);
+                alignedCnt += this.NumAlignedCells(x, y, dir[0], dir[1], cell);
             }
 
-            if (matchCnt >= NUM_ALIGNED_TO_WIN) return true;
+            if (alignedCnt >= NUM_ALIGNED_TO_WIN)return true; 
         }
 
         return false;
+    }
+
+    public AddToScore(player: CellState, score: number) {
+        this.InitScore(player);
+        const currScore = this._scores.get(player); 
+        this._scores.set(player, (currScore as number) + score);
     }
 
     private CheckForEnd() {
         // Check each direction for a win, if win game over
         for (let row = 0; row < this._rows; row++) {
             for (let col = 0; col < this._cols; col++) {
-                if (this.CellHasWon(col, row)) return true;
+                if (this.CheckCellWin(col, row)) return true;
             }
         }
+
         // If the number of possible moves is 0 and there's no winner, game over
         return this.GetPossibleMoves().size == 0;
     }
@@ -146,12 +170,8 @@ export class Game {
         if (this._grid[row][col] === CellState.Empty)
             this._grid[row][col] = this._activePlayer;
 
-        if (this.CheckForEnd()) { 
-            this._isGameOver = true;
-            this.InitScore(this._activePlayer);
-            const currScore = this._scores.get(this._activePlayer); 
-            this._scores.set(this._activePlayer, (currScore as number) + 1); 
-        }
+        if (this.CheckForEnd()) this._isGameOver = true;
+        
         this._activePlayer = getOppositePlayer(this._activePlayer);
     }
 
@@ -165,6 +185,38 @@ export class Game {
         }
 
         return moves;
+    }
+
+    public CalculateScoreAndWinner(maximizingSym: CellState) {
+        let score = 0;
+        let winner: CellState | null = null;
+
+        // Loop through each cell
+        for (let row = 0; row < this._rows; row++) {
+            for (let col = 0; col < this._cols; col++) {
+                const cell = this._grid[row][col];
+                if (cell === CellState.Empty) continue;
+
+                // Check all directions (horizontal, vertical, diagonals)
+                for (const dirWithCompliment of DIRS_WITH_COMPLIMENTS) {
+                    let alignedCnt = 1;
+                    for (const dir of dirWithCompliment) {
+                        alignedCnt += this.NumAlignedCells(col, row, dir[0], dir[1], cell);
+                    }
+
+                    if (alignedCnt >= 3) {
+                        // Terminal win/loss
+                        score += cell === maximizingSym ? 10 : -10;
+                        winner = cell;
+                    } else if (alignedCnt === 2) {
+                        // Potential threats / two-in-a-row
+                        score += cell === maximizingSym ? 2 : -2;
+                    }
+                }
+            }
+        }
+
+        return { score, winner };
     }
 
     static Memento = class implements IMemento {
@@ -197,8 +249,9 @@ export class Game {
 
     public GetState(): IMemento {
         const gridCpy = this._grid.map(row => [...row]);
+        const scoresCpy = new Map(this._scores); // <-- clone Map
 
-        const memento = new Game.Memento(this._rows, this._cols, gridCpy, this._isGameOver, this._activePlayer, this._scores);
+        const memento = new Game.Memento(this._rows, this._cols, gridCpy, this._isGameOver, this._activePlayer, scoresCpy);
         return memento;
     }
 
@@ -209,5 +262,6 @@ export class Game {
         this._grid = memento.Grid;
         this._isGameOver = memento.IsGameOver;
         this._activePlayer = memento.ActivePlayer;
+        this._scores = memento.Scores;
     }
 };
