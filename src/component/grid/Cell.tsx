@@ -29,12 +29,12 @@ const Cell = ({ value, row, col }: CellProps) => {
     return (
         <div className="col-sm p-0 game-cell">
             <button 
-                className={`card btn ${(!disabled ? 'btn-secondary': 'btn-danger')} btn-  w-100 h-100 text-center border-1 shadow-sm m-0 p-0`}
+                className={`card btn ${(!disabled ? 'btn-secondary': 'btn-danger')} w-100 h-100 border-1 shadow-sm m-0 p-0`}
                 style={{aspectRatio: '1 / 1', overflow: "hidden"}}
                 onClick={() => onCellClick(row, col)}
             >
-                <div className="card-body p-0 d-flex align-items-center justify-content-center">
-                    <h5 className="card-title p-0 m-0 text-center">{text}</h5>
+                <div className="card-body d-flex align-items-center justify-content-center p-0 m-0">
+                    <h5 className="p-0 m-0 text-center w-100">{text}</h5>
                 </div>
             </button>
         </div>
