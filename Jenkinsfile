@@ -45,6 +45,7 @@ pipeline {
                 scpBuildFilesToWWW('clark', 'clarkmiller.ca', 'tic-tac-toe.qrcool.ca')
                 updateNginxConf('clark', 'clarkmiller.ca', 'tic-tac-toe.qrcool.ca')
             }
+            
         }
     }
 }
