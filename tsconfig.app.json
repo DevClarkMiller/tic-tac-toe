@@ -22,7 +22,16 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@game/*": ["game/*"],
+      "@models/*": ["models/*"],
+      "@components/*": ["component/*"],
+      "@context/*": ["context/*"],
+      "@helpers/*": ["helpers/*"],
+      "@workers/*": ["workers/*"]
+    },
   },
   "include": ["src"]
 }

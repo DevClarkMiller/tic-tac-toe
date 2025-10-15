@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 // CONTEXT
-import { GridContext } from '../../context/GridContext';
+import { GridContext } from '@context/GridContext';
 
 // COMPONENT
 import Row from './Row';

@@ -1,8 +1,8 @@
 import { useContext, useMemo } from "react";
-import { GridContext } from "../../context/GridContext";
+import { GridContext } from "@context/GridContext";
 
 // HELPERS
-import { CellState } from "../../helpers/GameHelper";
+import { CellState } from "@helpers/GameHelper";
 
 // ICONS
 import { RxCross1, RxCircle  } from "react-icons/rx";
@@ -14,7 +14,7 @@ export interface CellProps {
 }
 
 const Cell = ({ value, row, col }: CellProps) => {
-    const { onCellClick } = useContext(GridContext);
+    const { onCellClick, game } = useContext(GridContext);
 
     const text = useMemo(() => {
         switch (value) {
@@ -24,10 +24,12 @@ const Cell = ({ value, row, col }: CellProps) => {
         };
     }, [value]);
 
+    const disabled = game.IsGameOver;
+
     return (
         <div className="col-sm p-0" style={{width: '150px'}}>
             <button 
-                className="card btn btn-secondary w-100 h-100 text-center border-1 shadow-sm m-0 p-0"
+                className={`card btn ${(!disabled ? 'btn-secondary': 'btn-danger')} btn-  w-100 h-100 text-center border-1 shadow-sm m-0 p-0`}
                 style={{aspectRatio: '1 / 1', overflow: "hidden"}}
                 onClick={() => onCellClick(row, col)}
             >

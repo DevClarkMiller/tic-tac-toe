@@ -1,4 +1,6 @@
-import { CellState, Game, Coord } from "./GameHelper";
+import type { Game } from "@game/Game";
+import type { Coord } from "@models/Coord";
+import { CellState } from "./GameHelper";
 
 export const evaluate = (game: Game, maximizingSym: CellState) => {
     const score = game.CalculateScoreAndWinner(maximizingSym).score;
@@ -55,11 +57,11 @@ export const minmax = (game: Game, depth: number, maximizingPlayer: boolean, max
 };
 
 export const determineMove = (game: Game): Promise<Coord | null> => {
-  const DEPTH = 3;
   return new Promise(resolve => {
     setTimeout(() => {
-      const value = minmax(game.Clone(), DEPTH, true, CellState.Circle);
-      resolve(value.move);
+        console.log(game.Difficulty);
+        const value = minmax(game.Clone(), game.Difficulty, true, game.ActivePlayer);
+        resolve(value.move);
     }, 0);
   });
 };

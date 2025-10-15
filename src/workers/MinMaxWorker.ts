@@ -1,5 +1,5 @@
-import { Game, Coord, CellState } from "../helpers/GameHelper";
-import { minmax } from "../helpers/GameTheoryHelper";
+// import { Game, Coord, CellState } from "../helpers/GameHelper";
+// import { minmax } from "../helpers/GameTheoryHelper";
 
 
 // self.onmessage = (event: MessageEvent<any>) => {

@@ -1,13 +1,15 @@
 import { useMemo, createContext, type ReactNode, useState, useEffect } from 'react';
 
 // HELPERS
-import { CellState, cellStateName, Game, isPlayer } from '../helpers/GameHelper';
-import { determineMove } from '../helpers/GameTheoryHelper';
+import { CellState, cellStateName } from '@game/CellState';
+import { determineMove } from '@helpers/GameTheoryHelper';
+import { Game } from '@game/Game';
 
 export interface GridContextType {
     game: Game;
     playerSymbol: CellState;
     setPlayerSymbol: React.Dispatch<React.SetStateAction<CellState>>;
+    setGame: React.Dispatch<React.SetStateAction<Game>>;
     onCellClick: (row: number, col: number) => void;
 } 
 
@@ -26,6 +28,7 @@ export const GridContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const onCellClick = async (row: number, col: number) => {
+        if (game.IsGameOver) return;
         // Player move
         let currentGame = game.Clone();
         currentGame.GameStarted = true;
@@ -36,10 +39,14 @@ export const GridContextProvider = ({ children }: { children: ReactNode }) => {
         if (aiMove) makeMove(aiMove.y, aiMove.x, currentGame);
     };
 
+    useEffect(() => {
+        if (!game.GameStarted) game.ActivePlayer = playerSymbol;
+    }, [playerSymbol]);
+
     useEffect(() => { 
         if (game?.IsGameOver) {
             const winner = game.CalculateScoreAndWinner(game.ActivePlayer).winner;
-            let msg = '';
+            let msg;
             if (winner !== null) msg = `${cellStateName(winner as CellState)} won the game!`;
             else msg = 'A cats game, nobody won!';
 
@@ -48,7 +55,7 @@ export const GridContextProvider = ({ children }: { children: ReactNode }) => {
     }, [game?.IsGameOver]);
     
     const value = useMemo(() => {
-        return  { game, playerSymbol, setPlayerSymbol, onCellClick };
+        return  { game, playerSymbol, setPlayerSymbol, setGame, onCellClick };
     }, [game, onCellClick]);
 
     return (

@@ -6,7 +6,7 @@ import Grid from './component/grid/Grid';
 
 // CONTEXT
 import { GridContextProvider } from './context/GridContext';
-import GameTools from './component/grid/GameTools';
+import GameTools from './component/GameTools/GameTools';
 
 const App = () => {
   
@@ -14,8 +14,12 @@ const App = () => {
     <GridContextProvider>
       <div className='w-100 h-100'>
         <h1>Tic-Tac-Toe</h1>
-        <GameTools />
-        <Grid />
+        <div className='container'>
+          <div className='row flex-lg-row flex-column'>
+            <GameTools />
+            <Grid />
+          </div>
+        </div>
       </div>
     </GridContextProvider>
   )
