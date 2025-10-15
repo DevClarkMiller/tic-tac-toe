@@ -1,12 +1,19 @@
 import { Game } from "@game/Game";
 import type GameProp from "types/GameProp";
+import { CellState } from "@game/CellState";
 
 // ICONS
 import { IoIosRefresh } from "react-icons/io";
 
-const RefreshButton = ({ game, setGame }: GameProp) => {
+export interface RefreshButtonProps extends GameProp {
+    playerSymbol: CellState;
+}
+
+const RefreshButton = ({ playerSymbol, game, setGame }: RefreshButtonProps) => {
     const onClick = () => {
-        setGame(new Game(game.Rows, game.Cols));
+        const newGame = new Game(game.Rows, game.Cols);
+        newGame.ActivePlayer = playerSymbol;
+        setGame(newGame);
     };
 
     return (

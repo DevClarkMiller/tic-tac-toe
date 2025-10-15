@@ -13,10 +13,10 @@ const GameTools = () => {
     const gameStarted = useMemo(() => game.GameStarted, [game]);
 
     return (
-        <div className="d-flex mb-2 justify-content-between align-items-center">
+        <div className="d-flex mb-2 justify-content-between align-items-start flex-column gap-3 flex-lg-row align-items-lg-center">
             <PlayerSymSelector gameStarted={gameStarted} playerSymbol={playerSymbol} setPlayerSymbol={setPlayerSymbol} />
             <DifficultySelector game={game} setGame={setGame} />
-            <RefreshButton game={game} setGame={setGame} />
+            <RefreshButton playerSymbol={playerSymbol} game={game} setGame={setGame} />
         </div>
     );
 }

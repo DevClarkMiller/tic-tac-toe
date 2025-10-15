@@ -12,14 +12,12 @@ const App = () => {
   
   return (
     <GridContextProvider>
-      <div className='w-100 h-100'>
+      <div className='w-100 min-vh-100 d-flex align-content-between flex-column'>
         <h1>Tic-Tac-Toe</h1>
-        <div className='container'>
-          <div className='row flex-lg-row flex-column'>
+        <div className='d-flex flex-column flex-grow-1'>
             <GameTools />
             <Grid />
           </div>
-        </div>
       </div>
     </GridContextProvider>
   )
