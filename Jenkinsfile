@@ -54,6 +54,7 @@ pipeline {
                     changeset 'src/**'
                     changeset 'package.json'
                     changeset 'package-lock.json'
+                    changeset 'nginx.conf'
                     changeset "Jenkinsfile"
                     expression { return params.FORCE_RUN }
                 }
