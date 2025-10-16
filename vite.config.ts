@@ -1,21 +1,18 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tsconfigPaths()
-  ],
-  resolve: {
-    alias: {
-      "@game": "/src/game",
-      "@models": "/src/models",
-      "@components": "/src/component",
-      "@context": "/src/context",
-      "@helpers": "/src/helpers",
-      "@workers": "/src/workers",
-    },
-  }
-})
+	plugins: [react(), tsconfigPaths()],
+	resolve: {
+		alias: {
+			'@game': '/src/game',
+			'@models': '/src/models',
+			'@components': '/src/component',
+			'@context': '/src/context',
+			'@helpers': '/src/helpers',
+			'@workers': '/src/workers',
+		},
+	},
+});

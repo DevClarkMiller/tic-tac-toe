@@ -1,3 +1,3 @@
 export interface IMemento {
-    Serialize(): unknown;
+	Serialize(): unknown;
 }

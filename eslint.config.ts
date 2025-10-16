@@ -1,72 +1,79 @@
+// @ts-nocheck
 import js from '@eslint/js';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
-import pluginReact from 'eslint-plugin-react';
-import stylistic from '@stylistic/eslint-plugin'
-import { defineConfig } from 'eslint/config';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import importPlugin from 'eslint-plugin-import';
+import prettierPlugin from 'eslint-plugin-prettier';
 
-export default defineConfig([
-  tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  { 
-    files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'], 
-    plugins: { 
-      js,
-      '@stylistic': stylistic,
-     }, 
-    extends: ['js/recommended'], 
-    languageOptions: { 
-      globals: globals.browser 
-    },
-    rules: {
-      '@stylistic/quotes': ['error', 'single'],
-      '@stylistic/no-extra-semi': ['error', 'last'],
-      '@stylistic/semi': ['error'],
-      'react/react-in-jsx-scope': 'off',
-      'react/prefer-stateless-function': 'error',
-      'react/button-has-type': 'error',
-      'react/no-unused-prop-types': 'error',
-      'react/jsx-pascal-case': 'error',
-      'react/jsx-no-script-url': 'error',
-      'react/no-children-prop': 'error',
-      'react/no-danger': 'error',
-      'react/no-danger-with-children': 'error',
-      'react/no-unstable-nested-components': ['error', { allowAsProps: true }],
-      'react/jsx-fragments': 'error',
-      'react/destructuring-assignment': [
-        'error',
-        'always',
-        { destructureInSignature: 'always' },
-      ],
-      'react/jsx-no-leaked-render': ['error', { validStrategies: ['ternary'] }],
-      'react/jsx-max-depth': ['error', { max: 5 }],
-      'react/function-component-definition': [
-        'warn',
-        { namedComponents: 'arrow-function' },
-      ],
-      'react/jsx-key': [
-        'error',
-        {
-          checkFragmentShorthand: true,
-          checkKeyMustBeforeSpread: true,
-          warnOnDuplicates: true,
-        },
-      ],
-      'react/jsx-no-useless-fragment': 'warn',
-      'react/jsx-curly-brace-presence': 'warn',
-      'react/no-typos': 'warn',
-      'react/display-name': 'warn',
-      'react/self-closing-comp': 'warn',
-      'react/jsx-sort-props': 'warn',
-      'react/jsx-one-expression-per-line': 'off',
-      'react/prop-types': 'off',
-      "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        "selector": "method",
-        "format": ["PascalCase"]
-      }
-    ]
-    }
-  },
-]);
+export default [
+	// Base JS recommended rules
+	js.configs.recommended,
+
+	{
+		files: ['**/*.{ts,tsx,js,jsx}'],
+		ignores: ['node_modules/**', 'dist/**'],
+
+		languageOptions: {
+			parser: tsParser,
+			parserOptions: {
+				ecmaVersion: 2021,
+				sourceType: 'module',
+				ecmaFeatures: { jsx: true },
+			},
+			globals: { browser: true, jest: true },
+		},
+
+		plugins: {
+			'@typescript-eslint': tseslint,
+			react,
+			'react-hooks': reactHooks,
+			import: importPlugin,
+			prettier: prettierPlugin,
+		},
+
+		settings: {
+			react: { version: 'detect' },
+		},
+
+		rules: {
+			// General JS/TS
+			semi: ['error', 'always'],
+			'no-unused-vars': [
+				'error',
+				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+			],
+			'no-console': 'off',
+			'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0, maxEOF: 0 }],
+			'no-var': 'error',
+			'no-new-object': 'error',
+			'no-array-constructor': 'error',
+
+			// React
+			'react/prop-types': 'off',
+			'react/display-name': 'off',
+			'react/react-in-jsx-scope': 'off',
+			'react/jsx-handler-names': [
+				'error',
+				{ eventHandlerPrefix: 'handle', eventHandlerPropPrefix: 'on' },
+			],
+
+			// React Hooks
+			'react-hooks/rules-of-hooks': 'error',
+			'react-hooks/exhaustive-deps': 'error',
+
+			// Prettier formatting
+			'prettier/prettier': [
+				'error',
+				{
+					semi: true,
+					singleQuote: true,
+					endOfLine: 'auto', // ✅ fixes CRLF ␍ issues on Windows
+					useTabs: true,
+					tabWidth: 1,
+				},
+			],
+		},
+	},
+];

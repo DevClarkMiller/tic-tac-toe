@@ -1,6 +1,6 @@
-import { Game } from "@game/Game";
+import { Game } from '@game/Game';
 
 export default interface GameProp {
-    game: Game;
-    setGame: React.Dispatch<React.SetStateAction<Game>>; 
-};
+	game: Game;
+	setGame: React.Dispatch<React.SetStateAction<Game>>;
+};;;;;;;;;;;
