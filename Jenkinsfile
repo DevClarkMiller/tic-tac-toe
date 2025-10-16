@@ -29,30 +29,14 @@ pipeline {
         }
 
         stage('Install Dependencies Frontend') {
-            when {
-                anyOf {
-                    changeset 'src/**'
-                    changeset 'package.json'
-                    changeset 'package-lock.json'
-                    changeset "Jenkinsfile"
-                    expression { return params.FORCE_RUN }
-                }
-            }
+            when runConditions
             steps {
                 sh 'npm install'
             }
         }
 
         stage('Build Frontend') {
-            when {
-                anyOf {
-                    changeset 'src/**'
-                    changeset 'package.json'
-                    changeset 'package-lock.json'
-                    changeset "Jenkinsfile"
-                    expression { return params.FORCE_RUN }
-                }
-            }
+            when runConditions
             steps {
                 sh 'npm run build'
             }
