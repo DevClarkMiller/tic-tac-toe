@@ -19,7 +19,7 @@ const RefreshButton = ({ playerSymbol, game, setGame }: RefreshButtonProps) => {
 	return (
 		<button
 			onClick={onClick}
-			className="btn-icon btn bg-transparent fs-2 d-flex align-content-center icon-link-hover"
+			className="p-0 btn-icon btn bg-transparent fs-2 d-flex align-content-center icon-link-hover"
 		>
 			<IoIosRefresh />
 		</button>

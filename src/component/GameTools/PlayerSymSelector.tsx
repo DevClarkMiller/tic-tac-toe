@@ -1,4 +1,4 @@
-import { useState, type JSX } from 'react';
+import React, { useState, type JSX } from 'react';
 import { CellState } from '@game/CellState';
 
 import Select from 'react-select';
@@ -36,7 +36,7 @@ const PlayerSymSelector = ({
 	};
 
 	return (
-		<div className="d-flex justify-content-center align-items-center">
+		<div className="w-100 d-flex justify-content-between align-items-center">
 			<h3 className="me-2">Player</h3>
 			<Select<Option, false>
 				isDisabled={gameStarted}

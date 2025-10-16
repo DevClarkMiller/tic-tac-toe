@@ -14,7 +14,7 @@ const GameTools = () => {
 	const gameStarted = useMemo(() => game.GameStarted, [game]);
 
 	return (
-		<div className="d-flex mb-2 justify-content-between align-items-start flex-column gap-3 flex-lg-row align-items-lg-center">
+		<div className="d-flex mb-2 justify-content-between align-items-start flex-column gap-2 flex-lg-row align-items-lg-center">
 			<PlayerSymSelector
 				gameStarted={gameStarted}
 				playerSymbol={playerSymbol}
