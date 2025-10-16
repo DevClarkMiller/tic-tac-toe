@@ -32,7 +32,7 @@ export const minmax = (
 		let maxEval = Number.NEGATIVE_INFINITY;
 
 		for (const move of possibleMoves) {
-			let memento = game.GetState();
+			const memento = game.GetState();
 			game.MakeMove(move);
 			const currEval = minmax(game, depth - 1, false, maximizingSym).eval;
 			game.SetState(memento);
@@ -47,7 +47,7 @@ export const minmax = (
 		let minEval = Number.POSITIVE_INFINITY;
 
 		for (const move of possibleMoves) {
-			let memento = game.GetState();
+			const memento = game.GetState();
 			game.MakeMove(move);
 			const currEval = minmax(game, depth - 1, true, maximizingSym).eval;
 			game.SetState(memento);
