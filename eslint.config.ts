@@ -5,7 +5,7 @@ import tsParser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import importPlugin from 'eslint-plugin-import';
-import prettierPlugin from 'eslint-plugin-prettier';
+// import prettierPlugin from 'eslint-plugin-prettier';
 
 export default [
 	// Base JS recommended rules
@@ -30,7 +30,7 @@ export default [
 			react,
 			'react-hooks': reactHooks,
 			import: importPlugin,
-			prettier: prettierPlugin,
+			// prettier: prettierPlugin,
 		},
 
 		settings: {
@@ -39,7 +39,12 @@ export default [
 
 		rules: {
 			// General JS/TS
-			semi: ['error', 'always'],
+			'semi': ['error', 'always'],
+			'@typescript-eslint/semi': [
+				'error',
+				'always',
+				{ omitLastInOneLineBlock: true }
+			],
 			'no-unused-vars': [
 				'error',
 				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
@@ -63,17 +68,17 @@ export default [
 			'react-hooks/rules-of-hooks': 'error',
 			'react-hooks/exhaustive-deps': 'error',
 
-			// Prettier formatting
-			'prettier/prettier': [
-				'error',
-				{
-					semi: true,
-					singleQuote: true,
-					endOfLine: 'auto', // ✅ fixes CRLF ␍ issues on Windows
-					useTabs: true,
-					tabWidth: 1,
-				},
-			],
+			// // Prettier formatting
+			// 'prettier/prettier': [
+			// 	'error',
+			// 	{
+			// 		semi: true,
+			// 		singleQuote: true,
+			// 		endOfLine: 'auto', // ✅ fixes CRLF ␍ issues on Windows
+			// 		useTabs: true,
+			// 		tabWidth: 1,
+			// 	},
+			// ],
 		},
 	},
 ];
