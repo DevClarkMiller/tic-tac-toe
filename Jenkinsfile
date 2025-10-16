@@ -11,6 +11,16 @@ pipeline {
         )
     }
 
+    def runConditions = {
+        anyOf {
+            changeset 'src/**'
+            changeset 'package.json'
+            changeset 'package-lock.json'
+            changeset "Jenkinsfile"
+            expression { return params.FORCE_RUN }
+        }
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -60,8 +70,13 @@ pipeline {
                 }
             }
             steps {
-                scpBuildFilesToWWW('clark', 'clarkmiller.ca', 'tic-tac-toe.qrcool.ca')
-                updateNginxConf('clark', 'clarkmiller.ca', 'tic-tac-toe.qrcool.ca')
+                withCredentials([
+                    string(credentialsId: 'vps-username', variable: 'USERNAME'),
+                    string(credentialsId: 'vps-domain', variable: 'DOMAIN')
+                ]) {
+                    scpBuildFilesToWWW(USERNAME, DOMAIN, 'tic-tac-toe.qrcool.ca')
+                    updateNginxConf(USERNAME, DOMAIN, 'tic-tac-toe.qrcool.ca')
+                }
             }
 
         }
