@@ -1,5 +1,15 @@
 @Library('pipeline-lib') _
 
+ def runConditions = {
+        anyOf {
+            changeset 'src/**'
+            changeset 'package.json'
+            changeset 'package-lock.json'
+            changeset "Jenkinsfile"
+            expression { return params.FORCE_RUN }
+        }
+    }
+
 pipeline {
     agent any
 
@@ -9,16 +19,6 @@ pipeline {
             defaultValue: false,
             description: 'Forces run even if there are no changes'
         )
-    }
-
-    def runConditions = {
-        anyOf {
-            changeset 'src/**'
-            changeset 'package.json'
-            changeset 'package-lock.json'
-            changeset "Jenkinsfile"
-            expression { return params.FORCE_RUN }
-        }
     }
 
     stages {
