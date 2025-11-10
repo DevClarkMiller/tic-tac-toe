@@ -21,10 +21,10 @@ pipeline {
         stage('Install Dependencies Frontend') {
             when {
                 anyOf {
-                    changeset 'src/**'
-                    changeset 'package.json'
-                    changeset 'package-lock.json'
-                    changeset "Jenkinsfile"
+                    changeset 'client/src/**'
+                    changeset 'client/package.json'
+                    changeset 'client/package-lock.json'
+                    changeset 'Jenkinsfile'
                     expression { return params.FORCE_RUN }
                 }
             }
@@ -36,10 +36,10 @@ pipeline {
         stage('Build Frontend') {
             when {
                 anyOf {
-                    changeset 'src/**'
-                    changeset 'package.json'
-                    changeset 'package-lock.json'
-                    changeset "Jenkinsfile"
+                    changeset 'client/src/**'
+                    changeset 'client/package.json'
+                    changeset 'client/package-lock.json'
+                    changeset 'Jenkinsfile'
                     expression { return params.FORCE_RUN }
                 }
             }
@@ -51,11 +51,10 @@ pipeline {
         stage('Deploy Frontend') {
             when {
                 anyOf {
-                    changeset 'src/**'
-                    changeset 'package.json'
-                    changeset 'package-lock.json'
-                    changeset 'nginx.conf'
-                    changeset "Jenkinsfile"
+                    changeset 'client/src/**'
+                    changeset 'client/package.json'
+                    changeset 'client/package-lock.json'
+                    changeset 'Jenkinsfile'
                     expression { return params.FORCE_RUN }
                 }
             }
