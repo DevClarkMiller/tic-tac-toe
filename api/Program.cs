@@ -1,4 +1,4 @@
-
+﻿
 using api.Hubs;
 
 namespace api
@@ -17,7 +17,16 @@ namespace api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddCors();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowClient", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials(); // 👈 Required for SignalR
+                });
+            });
 
             var app = builder.Build();
 
@@ -30,7 +39,7 @@ namespace api
 
             app.UseHttpsRedirection();
 
-            app.UseCors();
+            app.UseCors("AllowClient");
             app.MapHub<ChatHub>("/chathub");
 
             app.UseAuthentication();

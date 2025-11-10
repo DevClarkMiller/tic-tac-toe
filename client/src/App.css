@@ -26,12 +26,6 @@
   width: 85px;
 }
 
-@media screen and (max-width:480px) {
-  .game-cell {
-    /* width: 75px; */
-  }
-}
-
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -45,10 +39,6 @@
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
-}
-
-.card {
-  padding: 2em;
 }
 
 .read-the-docs {
