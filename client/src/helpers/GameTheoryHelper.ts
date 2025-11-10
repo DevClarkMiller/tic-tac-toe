@@ -16,15 +16,13 @@ export const minmax = (
 	game: Game,
 	depth: number,
 	maximizingPlayer: boolean,
-	maximizingSym: CellState,
+	maximizingSym: CellState
 ): MinMaxResult => {
-	if (depth === 0 || game.IsGameOver)
-		return { move: null, eval: evaluate(game, maximizingSym) };
+	if (depth === 0 || game.IsGameOver) return { move: null, eval: evaluate(game, maximizingSym) };
 
 	const possibleMoves = game.GetPossibleMoves();
 
-	if (possibleMoves.size === 0)
-		return { move: null, eval: evaluate(game, maximizingSym) };
+	if (possibleMoves.size === 0) return { move: null, eval: evaluate(game, maximizingSym) };
 
 	let bestMove: Coord | null = null;
 
@@ -62,7 +60,7 @@ export const minmax = (
 };
 
 export const determineMove = (game: Game): Promise<Coord | null> => {
-	return new Promise((resolve) => {
+	return new Promise(resolve => {
 		setTimeout(() => {
 			console.log(game.Difficulty);
 			const value = minmax(game.Clone(), game.Difficulty, true, game.ActivePlayer);

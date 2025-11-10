@@ -16,12 +16,7 @@ export class Game {
 
 	private _scores: Map<CellState, number> = new Map<CellState, number>();
 
-	public constructor(
-		rows: number,
-		cols: number,
-		grid?: CellState[][],
-		memento?: IMemento,
-	) {
+	public constructor(rows: number, cols: number, grid?: CellState[][], memento?: IMemento) {
 		if (memento != null && memento instanceof Game.Memento) {
 			this.SetState(memento);
 			return;
@@ -85,16 +80,10 @@ export class Game {
 	}
 
 	private CopyGrid(grid: number[][]) {
-		return grid.map((row) => [...row]);
+		return grid.map(row => [...row]);
 	}
 
-	private NumAlignedCells = (
-		x: number,
-		y: number,
-		xMod: number,
-		yMod: number,
-		cell: CellState,
-	) => {
+	private NumAlignedCells = (x: number, y: number, xMod: number, yMod: number, cell: CellState) => {
 		const ROWS = 3;
 		const COLS = 3;
 		const RANGE = 2;
@@ -160,8 +149,7 @@ export class Game {
 	public MakeMove(coord: Coord) {
 		const row = coord.y;
 		const col = coord.x;
-		if (this._grid[row][col] === CellState.Empty)
-			this._grid[row][col] = this._activePlayer;
+		if (this._grid[row][col] === CellState.Empty) this._grid[row][col] = this._activePlayer;
 
 		if (this.CheckForEnd()) this._isGameOver = true;
 
@@ -243,7 +231,7 @@ export class Game {
 			isGameOver: boolean,
 			activePlayer: CellState,
 			scores: Map<CellState, number>,
-			gameStarted: boolean,
+			gameStarted: boolean
 		) {
 			this.Rows = rows;
 			this.Cols = cols;
@@ -266,7 +254,7 @@ export class Game {
 	};
 
 	public GetState(): IMemento {
-		const gridCpy = this._grid.map((row) => [...row]);
+		const gridCpy = this._grid.map(row => [...row]);
 		const scoresCpy = new Map(this._scores); // Clone Map
 
 		const memento = new Game.Memento(
@@ -276,7 +264,7 @@ export class Game {
 			this._isGameOver,
 			this._activePlayer,
 			scoresCpy,
-			this.GameStarted,
+			this.GameStarted
 		);
 		return memento;
 	}

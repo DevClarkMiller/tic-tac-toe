@@ -26,7 +26,7 @@ const PlayerSymSelector = ({
 	];
 
 	const [selectedOption, setSelectedOption] = useState<Option>(
-		options.find((opt) => opt.value === playerSymbol) ?? options[0],
+		options.find(opt => opt.value === playerSymbol) ?? options[0]
 	);
 
 	const onSelect = (option: Option | null) => {

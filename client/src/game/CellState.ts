@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export enum CellState {
 	Empty = -1,
 	Cross,

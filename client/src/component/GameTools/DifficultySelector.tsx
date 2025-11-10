@@ -20,7 +20,7 @@ const DifficultySelector = ({ game, setGame }: GameProp) => {
 	];
 
 	const [selectedOption, setSelectedOption] = useState<Option>(
-		options.find((opt) => opt.value === game.Difficulty) ?? options[0],
+		options.find(opt => opt.value === game.Difficulty) ?? options[0]
 	);
 
 	const onSelect = (option: Option | null) => {

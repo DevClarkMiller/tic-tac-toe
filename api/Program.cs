@@ -1,4 +1,6 @@
 
+using api.Hubs;
+
 namespace api
 {
     public class Program
@@ -9,10 +11,13 @@ namespace api
 
             // Add services to the container.
 
+            builder.Services.AddSignalR();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddCors();
 
             var app = builder.Build();
 
@@ -24,6 +29,9 @@ namespace api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors();
+            app.MapHub<ChatHub>("/chathub");
 
             app.UseAuthentication();
             app.UseAuthorization();

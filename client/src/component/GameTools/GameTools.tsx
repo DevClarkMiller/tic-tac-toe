@@ -8,8 +8,7 @@ import DifficultySelector from './DifficultySelector';
 import { GridContext } from '@context/GridContext';
 
 const GameTools = () => {
-	const { game, playerSymbol, setGame, setPlayerSymbol } =
-		useContext(GridContext);
+	const { game, playerSymbol, setGame, setPlayerSymbol } = useContext(GridContext);
 
 	const gameStarted = useMemo(() => game.GameStarted, [game]);
 
