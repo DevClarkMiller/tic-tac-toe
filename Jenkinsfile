@@ -29,7 +29,9 @@ pipeline {
                 }
             }
             steps {
-                sh 'npm install'
+                dir('client') {
+                    sh 'npm install'
+                }
             }
         }
 
@@ -44,7 +46,9 @@ pipeline {
                 }
             }
             steps {
-                sh 'npm run build'
+                dir('client') {
+                    sh 'npm run build'
+                }
             }
         }
 
@@ -59,15 +63,16 @@ pipeline {
                 }
             }
             steps {
-                withCredentials([
-                    string(credentialsId: 'vps-username', variable: 'USERNAME'),
-                    string(credentialsId: 'vps-domain', variable: 'DOMAIN')
-                ]) {
-                    scpBuildFilesToWWW(USERNAME, DOMAIN, 'tic-tac-toe.qrcool.ca')
-                    updateNginxConf(USERNAME, DOMAIN, 'tic-tac-toe.qrcool.ca')
+                dir('client') {
+                    withCredentials([
+                        string(credentialsId: 'vps-username', variable: 'USERNAME'),
+                        string(credentialsId: 'vps-domain', variable: 'DOMAIN')
+                    ]) {
+                        scpBuildFilesToWWW(USERNAME, DOMAIN, 'tic-tac-toe.qrcool.ca')
+                        updateNginxConf(USERNAME, DOMAIN, 'tic-tac-toe.qrcool.ca')
+                    }
                 }
             }
-
         }
     }
 }
