@@ -2,12 +2,12 @@
 import './App.css';
 
 // COMPONENT
-import Grid from './component/grid/Grid';
+import Grid from './component/Grid/Grid';
 
 // CONTEXT
 import { GridContextProvider } from './context/GridContext';
 import GameTools from './component/GameTools/GameTools';
-import Chat from 'Chat';
+import Chat from '@components/Chat/Chat';
 
 const App = () => {
 	return (
