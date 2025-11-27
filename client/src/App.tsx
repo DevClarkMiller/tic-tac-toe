@@ -12,9 +12,9 @@ import Chat from 'Chat';
 const App = () => {
 	return (
 		<GridContextProvider>
-			<div className="w-100 max-vh-100 vh-100 d-flex align-content-between flex-column">
+			<div className="vh-100 w-100 d-flex align-content-between flex-column">
 				<h1>Tic-Tac-Toe</h1>
-				<div className="d-flex flex-column flex-grow-1 justify-content-between">
+				<div className="w-100 d-flex flex-column flex-grow-1 justify-content-between align-items-center">
 					<GameTools />
 					<Grid />
 					<Chat />
