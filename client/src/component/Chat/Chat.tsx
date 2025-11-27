@@ -1,11 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import * as signalR from '@microsoft/signalr';
-
-interface Message {
-	user: string;
-	content: string;
-	dataReceived: Date;
-}
+import { useContext, useState } from 'react';
+import type { Message } from 'types/Message';
+import { SessionContext } from '@context/SessionContext';
 
 const UserMessage = ({ message }: { message: Message }) => {
 	return (
@@ -51,36 +46,9 @@ const MessageInput = ({ sendMessage }: { sendMessage: (msg: string) => void }) =
 };
 
 const Chat = () => {
-	const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
-	const [messages, setMessages] = useState<Message[]>([]);
+	const { connection, messages, sendMessage } = useContext(SessionContext);
 
-	useEffect(() => {
-		const newConnection = new signalR.HubConnectionBuilder()
-			.withUrl('http://localhost:5229/chathub', { withCredentials: true })
-			.withAutomaticReconnect()
-			.build();
-
-		setConnection(newConnection);
-	}, []);
-
-	const startConnection = useCallback(async () => {
-		try {
-			await connection?.start();
-			connection?.on('ReceiveMessage', (user: string, msg: string) => {
-				setMessages(prev => [...prev, { user: user, content: msg, dataReceived: new Date() }]);
-			});
-		} catch (err: unknown) {
-			console.error(err);
-		}
-	}, [connection]);
-
-	const sendMessage = async (msg: string) => {
-		await connection?.invoke('SendMessage', 'Clark', msg);
-	};
-
-	useEffect(() => {
-		if (connection) startConnection();
-	}, [connection, startConnection]);
+	if (!connection || !connection?.connectionId) return null;
 
 	return (
 		<div className="w-100">
