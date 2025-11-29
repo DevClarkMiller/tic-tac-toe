@@ -16,6 +16,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
     "eslint-js": "github:eslint/js",
+    "helios-identity-sdk": "^1.0.3",
     "prettier": "^3.6.2",
     "react": "^19.2.0",
     "react-bootstrap": "^2.10.10",
