@@ -35,6 +35,7 @@ pipeline {
         DEV_NGINX_CONF = 'nginx.dev.conf'
         PROD_NGINX_CONF = 'nginx.prod.conf'
         DIR = 'client'
+        PROJECT_NAME='tic-tac-toe'
     }
 
     stages {
@@ -57,6 +58,8 @@ pipeline {
             steps {
                 dir(DIR) {
                     sh 'npm install'
+                    loadEnvFile(PROJECT_NAME, 'client', 'development')
+					loadEnvFile(PROJECT_NAME, 'client', 'production')
                 }
             }
         }

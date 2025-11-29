@@ -7,6 +7,7 @@ export const buildHeaders = (): Headers => {
 	} else {
 		headers.append('Content-Type', 'application/json');
 	}
+
 	return headers;
 };
 

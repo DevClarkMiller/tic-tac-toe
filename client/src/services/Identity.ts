@@ -1,12 +1,15 @@
-import { buildHeaders, buildUrl, type FetcherData } from '@helpers/ApiHelper';
+import { buildHeaders, type FetcherData } from '@helpers/ApiHelper';
 
+const IDENTITY_URL = import.meta.env.VITE_IDENTITY_URL;
+const IDENTITY_API_URL = import.meta.env.VITE_IDENTITY_API_URL ?? IDENTITY_URL;
 const BASE_URL = '/api/identity';
 
 export const auth = async (): Promise<FetcherData> => {
 	const payload: FetcherData = {};
 
 	try {
-		const url = buildUrl(`${BASE_URL}/auth`);
+		const url = new URL(`${IDENTITY_API_URL}${BASE_URL}/auth`);
+
 		const headers = buildHeaders();
 
 		const response = await fetch(url.toString(), { headers: headers });
@@ -26,5 +29,8 @@ export const login = async (): Promise<any> => {
 	const response = await auth();
 
 	if (!response.error) return response.data;
-	window.location.href = `https://helios-identity?redirectUrl=${window.location.href}`;
+	const newUrl = new URL(IDENTITY_URL);
+	newUrl.searchParams.append('redirectUrl', window.location.href);
+
+	window.location.href = newUrl.toString();
 };

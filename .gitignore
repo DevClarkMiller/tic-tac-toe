@@ -26,3 +26,5 @@ dist-ssr
 obj
 api.csproj.user
 bin
+client/.env.development
+client/.env.production
