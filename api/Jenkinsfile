@@ -28,8 +28,8 @@ pipeline {
         PROD_CLIENT_HOSTNAME = 'tic-tac-toe.qrcool.ca'
         USERNAME = credentials('vps-username')
         DOMAIN = credentials('vps-domain')
-        SERVER_USERNAME = credentials('vps-username')
-        SERVER_DOMAIN = credentials('vps-domain')
+        SERVER_USERNAME = credentials('server-username')
+        SERVER_DOMAIN = credentials('server-domain')
         PACKAGE = 'client/package.json'
         PACKAGE_LOCK = 'client/package-lock.json'
         JENKINS = 'Jenkinsfile'
