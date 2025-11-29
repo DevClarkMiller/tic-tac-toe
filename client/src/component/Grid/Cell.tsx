@@ -30,7 +30,7 @@ const Cell = ({ value, row, col }: CellProps) => {
 	const disabled = game.IsGameOver;
 
 	return (
-		<div className="col-sm p-0 game-cell">
+		<div className="p-0 game-cell w-100">
 			<button
 				className={`card btn ${!disabled ? 'btn-secondary' : 'btn-danger'} w-100 h-100 border-1 shadow-sm d-flex align-items-center justify-content-center m-0 p-0`}
 				style={{ aspectRatio: '1 / 1', overflow: 'hidden' }}

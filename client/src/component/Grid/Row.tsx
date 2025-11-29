@@ -7,7 +7,7 @@ export interface RowProps {
 
 const Row = ({ values, row }: RowProps) => {
 	return (
-		<div className="row">
+		<div className="w-100 d-flex">
 			{values.map((value, col) => (
 				<Cell key={`${row}-${col}`} value={value} row={row} col={col} />
 			))}

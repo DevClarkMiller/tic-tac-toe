@@ -14,7 +14,9 @@ const App = () => {
 		<GridContextProvider>
 			<div className="vh-100 vw-100 d-flex align-items-center flex-column">
 				<h1>Tic-Tac-Toe</h1>
-				<div className="w-25 d-flex flex-column flex-grow-1 justify-content-between align-items-center">
+				<div
+					className="w-75 d-flex flex-column flex-grow-1 justify-content-between align-items-center"
+					style={{ maxWidth: '650px' }}>
 					<GameTools />
 					<Grid />
 					<Chat />

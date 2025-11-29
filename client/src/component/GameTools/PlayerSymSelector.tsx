@@ -36,15 +36,17 @@ const PlayerSymSelector = ({
 	};
 
 	return (
-		<div className="w-100 d-flex justify-content-between align-items-center">
-			<h3 className="me-2">Player</h3>
-			<Select<Option, false>
-				isDisabled={gameStarted}
-				value={selectedOption}
-				onChange={onSelect}
-				options={options}
-				isSearchable={false}
-			/>
+		<div className="w-100 row align-items-center">
+			<h3 className="col-6 me-2 me-md-0">Player</h3>
+			<div className="col-auto">
+				<Select<Option, false>
+					isDisabled={gameStarted}
+					value={selectedOption}
+					onChange={onSelect}
+					options={options}
+					isSearchable={false}
+				/>
+			</div>
 		</div>
 	);
 };

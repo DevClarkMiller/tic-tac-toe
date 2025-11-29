@@ -32,15 +32,17 @@ const DifficultySelector = ({ game, setGame }: GameProp) => {
 	};
 
 	return (
-		<div className="w-100 d-flex justify-content-between align-items-center">
-			<h3 className="me-2">Difficulty</h3>
-			<Select<Option, false>
-				isDisabled={game.GameStarted}
-				value={selectedOption}
-				onChange={onSelect}
-				options={options}
-				isSearchable={false}
-			/>
+		<div className="w-100 row align-items-center">
+			<h3 className="col-6 me-2 me-md-0">Difficulty</h3>
+			<div className="col-auto">
+				<Select<Option, false>
+					isDisabled={game.GameStarted}
+					value={selectedOption}
+					onChange={onSelect}
+					options={options}
+					isSearchable={false}
+				/>
+			</div>
 		</div>
 	);
 };
