@@ -30,10 +30,8 @@ pipeline {
         DOMAIN = credentials('vps-domain')
         SERVER_USERNAME = credentials('server-username')
         SERVER_DOMAIN = credentials('server-domain')
-        PACKAGE = 'client/package.json'
-        PACKAGE_LOCK = 'client/package-lock.json'
         JENKINS = 'Jenkinsfile'
-        CHANGE_SRC = 'api/src/**'
+        CHANGE_SRC = 'api/**'
         DIR = 'api'
         SOLUTION_NAME = 'tic-tac-toe'
         PROJECT_NAME = 'tic-tac-toe.api'
