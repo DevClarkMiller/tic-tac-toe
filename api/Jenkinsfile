@@ -28,11 +28,14 @@ pipeline {
         PROD_CLIENT_HOSTNAME = 'tic-tac-toe.qrcool.ca'
         USERNAME = credentials('vps-username')
         DOMAIN = credentials('vps-domain')
+        SERVER_USERNAME = credentials('vps-username')
+        SERVER_DOMAIN = credentials('vps-domain')
         PACKAGE = 'client/package.json'
         PACKAGE_LOCK = 'client/package-lock.json'
         JENKINS = 'Jenkinsfile'
         CHANGE_SRC = 'api/src/**'
         DIR = 'api'
+        PROJECT_NAME = 'tic-tac-toe'
     }
 
     stages {
@@ -64,8 +67,8 @@ pipeline {
 			}
             steps {
 				dir(DIR) { 
-                    scpDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'dev')
-                    startDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'dev')
+                    scpDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'dev')
+                    startDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'dev')
 				}
             }
         }
@@ -80,8 +83,8 @@ pipeline {
 			}
             steps {
 				dir(DIR) { 
-                    scpDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'prod')
-                    startDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'prod')
+                    scpDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'prod')
+                    startDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'prod')
 				}
             }
         }
