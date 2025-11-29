@@ -75,7 +75,7 @@ pipeline {
                     changeset PACKAGE
                     changeset PACKAGE_LOCK
                     changeset JENKINS
-                    expression { return params.All }
+                    expression { return params.All || params.Dev }
                 }
             }
             steps {
