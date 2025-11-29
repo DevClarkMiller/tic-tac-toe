@@ -51,9 +51,7 @@ pipeline {
 			}
 			steps {
                 echo "Building Docker image for ${DIR}..."
-                dir(DIR){
-                    buildDockerImage('Dockerfile', 'tic-tac-toe', 'latest')
-                }
+                buildDockerImage('api/Dockerfile', 'tic-tac-toe', 'latest')
             }
         }
 
