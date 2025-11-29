@@ -98,7 +98,6 @@ pipeline {
             steps {
                 dir(CLIENT_DIR) {
                     scpBuildFilesToWWW(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME)
-                    updateNginxConf(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME)
                 }
             }
         }
@@ -106,14 +105,12 @@ pipeline {
         stage('Update Nginx Dev') {
             when {
                 anyOf {
-                    anyOf {
-                        changeset "${CLIENT_DIR}/${DEV_NGINX_CONF}"
-                        expression { return params.All || params.Dev }
-                    }
+                    changeset "${CLIENT_DIR}/${DEV_NGINX_CONF}"
+                    expression { return params.All || params.Dev }
                 }
             }
             steps {
-                dir("${DIR}") {
+                dir(CLIENT_DIR) {
                     updateNginxConf(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME, DEV_NGINX_CONF)
                 }
             }
@@ -156,7 +153,7 @@ pipeline {
                 }
             }
             steps {
-                dir("${DIR}") {
+                dir(CLIENT_DIR) {
                     updateNginxConf(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME, PROD_NGINX_CONF)
                 }
             }
