@@ -19,7 +19,7 @@ pipeline {
         booleanParam(
             name: 'Prod',
             defaultValue: false,
-            description: 'Runs prod even if there are no changes'
+            description: 'Runs prod'
         )
     }
 
