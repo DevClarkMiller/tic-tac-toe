@@ -37,13 +37,13 @@ pipeline {
                 checkout scm
 
                 script {
-                    def services = [
+                    services = [
                         'tic-tac-toe.api': 'api',
                         'tic-tac-toe.client': 'client',
                         // 'data': 'data'
                     ]
 
-                    def toTrigger = []
+                    toTrigger = []
                     services.each { service, path ->
                         if (params.FORCE_RUN || checkMicroservice(path)) {
                             echo "Changes detected in ${service}, will trigger pipelines."
@@ -56,7 +56,7 @@ pipeline {
                     if (toTrigger.isEmpty()) {
                         echo "No services changed. Nothing to trigger."
                     }
-					
+
                     toTrigger.each { service -> 
                         echo "Triggering ${service}..."
                         build job: service,
