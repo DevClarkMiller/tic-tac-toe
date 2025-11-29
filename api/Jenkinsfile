@@ -31,10 +31,8 @@ pipeline {
         PACKAGE = 'client/package.json'
         PACKAGE_LOCK = 'client/package-lock.json'
         JENKINS = 'Jenkinsfile'
-        CHANGE_SRC = 'client/src/**'
-        DEV_NGINX_CONF = 'nginx.dev.conf'
-        PROD_NGINX_CONF = 'nginx.prod.conf'
-        DIR = 'client'
+        CHANGE_SRC = 'api/src/**'
+        DIR = 'api'
     }
 
     stages {
@@ -44,27 +42,10 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build') {
             when {
                 anyOf {
-                    changeset CHANGE_SRC
-                    changeset PACKAGE
-                    changeset PACKAGE_LOCK
-                    changeset JENKINS
-                    expression { return params.All || params.Dev || params.Prod }
-                }
-            }
-            steps {
-                dir(DIR) {
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('Build Dev') {
-            when {
-                anyOf {
-                    changeset CHANGE_SRC
+                    changeset SRC
                     changeset PACKAGE
                     changeset PACKAGE_LOCK
                     changeset JENKINS
@@ -81,7 +62,7 @@ pipeline {
         stage('Deploy Dev') {
             when {
                 anyOf {
-                    changeset CHANGE_SRC
+                    changeset SRC
                     changeset PACKAGE
                     changeset PACKAGE_LOCK
                     changeset JENKINS
@@ -95,31 +76,6 @@ pipeline {
             }
         }
 
-        stage('Update Nginx Dev') {
-            when {
-                anyOf {
-                    changeset "${DIR}/${DEV_NGINX_CONF}"
-                    expression { return params.All || params.Dev }
-                }
-            }
-            steps {
-                dir(DIR) {
-                    updateNginxConf(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME, DEV_NGINX_CONF)
-                }
-            }
-        }
-
-        stage('Build Prod') {
-            when {
-                expression { return params.All || params.Prod }
-            }
-            steps {
-                dir(DIR) {
-                    sh 'npm run build'
-                }
-            }
-        }
-
         stage('Deploy Prod') {
             when {
                 expression { return params.All || params.Prod }
@@ -127,20 +83,6 @@ pipeline {
             steps {
                 dir(DIR) {
                     scpBuildFilesToWWW(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME)
-                }
-            }
-        }
-
-        stage('Update Nginx Prod') {
-            when {
-                anyOf {
-                    changeset "${DIR}/${PROD_NGINX_CONF}"
-                    expression { return params.All || params.Prod }
-                }
-            }
-            steps {
-                dir(DIR) {
-                    updateNginxConf(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME, PROD_NGINX_CONF)
                 }
             }
         }
