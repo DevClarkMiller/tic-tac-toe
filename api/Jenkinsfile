@@ -46,8 +46,10 @@ pipeline {
 
         stage('Load secrets') {
             when { 
-				changeset CHANGE_SRC
-				expression { return params.All || params.Dev || params.Prod }
+                anyOf {
+					changeset CHANGE_SRC
+					expression { return params.All || params.Dev || params.Prod }
+				}
 			}
 			steps {
                 dir(DIR) {
