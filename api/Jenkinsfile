@@ -42,49 +42,47 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             when {
-                anyOf {
-                    changeset SRC
-                    changeset PACKAGE
-                    changeset PACKAGE_LOCK
-                    changeset JENKINS
-                    expression { return params.All || params.Dev }
-                }
-            }
-            steps {
-                dir(DIR) {
-                    sh 'npm run build:dev'
+				anyOf {
+					changeset "${DIR}/**"
+					expression { return params.All || params.Dev || params.Prod }	
+				}
+			}
+			steps {
+                echo "Building Docker image for ${DIR}..."
+                dir(DIR){
+                    buildDockerImage('Dockerfile', 'tic-tac-toe', 'latest')
                 }
             }
         }
 
-        stage('Deploy Dev') {
-            when {
-                anyOf {
-                    changeset SRC
-                    changeset PACKAGE
-                    changeset PACKAGE_LOCK
-                    changeset JENKINS
-                    expression { return params.All || params.Dev }
-                }
-            }
-            steps {
-                dir(DIR) {
-                    scpBuildFilesToWWW(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME)
-                }
-            }
-        }
+        // stage('Deploy Dev') {
+        //     when {
+        //         anyOf {
+        //             changeset SRC
+        //             changeset PACKAGE
+        //             changeset PACKAGE_LOCK
+        //             changeset JENKINS
+        //             expression { return params.All || params.Dev }
+        //         }
+        //     }
+        //     steps {
+        //         dir(DIR) {
+        //             scpBuildFilesToWWW(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME)
+        //         }
+        //     }
+        // }
 
-        stage('Deploy Prod') {
-            when {
-                expression { return params.All || params.Prod }
-            }
-            steps {
-                dir(DIR) {
-                    scpBuildFilesToWWW(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME)
-                }
-            }
-        }
+        // stage('Deploy Prod') {
+        //     when {
+        //         expression { return params.All || params.Prod }
+        //     }
+        //     steps {
+        //         dir(DIR) {
+        //             scpBuildFilesToWWW(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME)
+        //         }
+        //     }
+        // }
     }
 }

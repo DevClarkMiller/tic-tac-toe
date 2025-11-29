@@ -38,7 +38,7 @@ pipeline {
 
                 script {
                     def services = [
-                        // 'tic-tac-toe.api': 'api',
+                        'tic-tac-toe.api': 'api',
                         'tic-tac-toe.client': 'client',
                         // 'data': 'data'
                     ]
