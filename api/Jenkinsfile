@@ -55,32 +55,34 @@ pipeline {
             }
         }
 
-        // stage('Deploy Dev') {
-        //     when {
-        //         anyOf {
-        //             changeset SRC
-        //             changeset PACKAGE
-        //             changeset PACKAGE_LOCK
-        //             changeset JENKINS
-        //             expression { return params.All || params.Dev }
-        //         }
-        //     }
-        //     steps {
-        //         dir(DIR) {
-        //             scpBuildFilesToWWW(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME)
-        //         }
-        //     }
-        // }
+        stage('Deploy Dev') {
+			when {
+				anyOf {
+					changeset "${DIR}/**"
+					expression { return params.All || params.Dev }
+				}
+			}
+            steps {
+				dir("${DIR}") { 
+					sh 'scp docker-compose-dev.yml miller@sys1.clarkmiller.ca:/home/miller/tic-tac-toe/dev/docker-compose.yml'
+                	sh 'ssh miller@sys1.clarkmiller.ca "cd tic-tac-tie/dev && docker compose up -d"'
+				}
+            }
+        }
 
-        // stage('Deploy Prod') {
-        //     when {
-        //         expression { return params.All || params.Prod }
-        //     }
-        //     steps {
-        //         dir(DIR) {
-        //             scpBuildFilesToWWW(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME)
-        //         }
-        //     }
-        // }
+        stage('Deploy Prod') {
+			when {
+				anyOf {
+					changeset "${DIR}/**"
+					expression { return params.All || params.Prod }
+				}
+			}
+            steps {
+				dir("${DIR}") { 
+					sh 'scp docker-compose-prod.yml miller@sys1.clarkmiller.ca:/home/miller/tic-tac-toe/prod/docker-compose.yml'
+                	sh 'ssh miller@sys1.clarkmiller.ca "cd tic-tac-tie/prod && docker compose up -d"'
+				}
+            }
+        }
     }
 }

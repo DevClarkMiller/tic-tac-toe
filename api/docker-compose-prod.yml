@@ -1,0 +1,10 @@
+services:
+  prod-tic-tac-toe-idenity:
+    image: tic-tac-toe:latest
+    container_name: prod-tic-tac-toe-identity
+    ports:
+      - "6418:8080"
+      - "6419:8081"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+    restart: on-failure

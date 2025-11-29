@@ -1,0 +1,10 @@
+services:
+  dev-tic-tac-toe:
+    image: tic-tac-toe:latest
+    container_name: dev-tic-tac-toe
+    ports:
+      - "6416:8080"
+      - "6417:8081"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    restart: on-failure
