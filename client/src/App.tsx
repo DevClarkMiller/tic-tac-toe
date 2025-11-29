@@ -8,9 +8,11 @@ import Grid from './component/Grid/Grid';
 import { GridContextProvider } from './context/GridContext';
 import GameTools from './component/GameTools/GameTools';
 import Chat from '@components/Chat/Chat';
-import useOptionalAuth from 'hooks/Auth/useAuth';
+import useAuth from 'helios-identity-sdk/hooks/useAuth';
 import Header from '@components/Header/Header';
 import { createContext, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
+import { IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
 
 export interface AppContextType {
 	isLoggedIn: boolean;
@@ -20,7 +22,12 @@ export interface AppContextType {
 export const AppContext = createContext<AppContextType>({} as AppContextType);
 
 const App = () => {
-	const { isLoggedIn, setIsLoggedIn } = useOptionalAuth({ optional: true });
+	const [searchParams, setSearchParams] = useSearchParams();
+	const { isLoggedIn, setIsLoggedIn } = useAuth(IDENTITY_URL, searchParams, setSearchParams, {
+		optional: true,
+		identityApiUrl: IDENTITY_API_URL,
+	});
+
 	const logout = useCallback(() => {
 		localStorage.removeItem('token');
 		setIsLoggedIn(false);

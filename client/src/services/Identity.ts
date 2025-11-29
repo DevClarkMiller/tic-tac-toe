@@ -1,8 +1,8 @@
 import { type FetcherData } from '@helpers/ApiHelper';
 import { login as identityLogin, auth as identityAuth } from 'helios-identity-sdk/services/Identity/Auth';
 
-const IDENTITY_URL = import.meta.env.VITE_IDENTITY_URL;
-const IDENTITY_API_URL = import.meta.env.VITE_IDENTITY_API_URL ?? IDENTITY_URL;
+export const IDENTITY_URL = import.meta.env.VITE_IDENTITY_URL;
+export const IDENTITY_API_URL = import.meta.env.VITE_IDENTITY_API_URL ?? IDENTITY_URL;
 
 export const auth = async (): Promise<FetcherData> => {
 	return await identityAuth(IDENTITY_API_URL);
