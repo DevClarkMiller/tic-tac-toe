@@ -128,7 +128,6 @@ pipeline {
             steps {
                 dir(CLIENT_DIR) {
                     scpBuildFilesToWWW(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME)
-                    updateNginxConf(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME)
                 }
             }
         }
