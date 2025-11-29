@@ -35,6 +35,8 @@ pipeline {
         DIR = 'api'
         SOLUTION_NAME = 'tic-tac-toe'
         PROJECT_NAME = 'tic-tac-toe.api'
+        DOCKER_PATH = 'api/Dockerfile'
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -68,7 +70,7 @@ pipeline {
 			}
 			steps {
                 echo "Building Docker image for ${DIR}..."
-                buildDockerImage('api/Dockerfile', 'tic-tac-toe', 'latest')
+                buildDockerImage(DOCKER_PATH, SOLUTION_NAME, IMAGE_TAG)
             }
         }
 
