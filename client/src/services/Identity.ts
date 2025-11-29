@@ -1,5 +1,5 @@
-import { type FetcherData } from '@helpers/ApiHelper';
-import { login as identityLogin, auth as identityAuth } from 'helios-identity-sdk/services/Identity/Auth';
+import { type FetcherData } from 'helios-utilities-sdk';
+import { login as identityLogin, auth as identityAuth } from 'helios-identity-sdk';
 
 export const IDENTITY_URL = import.meta.env.VITE_IDENTITY_URL;
 export const IDENTITY_API_URL = import.meta.env.VITE_IDENTITY_API_URL ?? IDENTITY_URL;

@@ -1,3 +1,8 @@
+import { createContext, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
+import { IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
+import { useAuth } from 'helios-identity-sdk';
+
 // CSS
 import './App.css';
 
@@ -8,11 +13,7 @@ import Grid from './component/Grid/Grid';
 import { GridContextProvider } from './context/GridContext';
 import GameTools from './component/GameTools/GameTools';
 import Chat from '@components/Chat/Chat';
-import useAuth from 'helios-identity-sdk/hooks/useAuth';
 import Header from '@components/Header/Header';
-import { createContext, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router';
-import { IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
 
 export interface AppContextType {
 	isLoggedIn: boolean;

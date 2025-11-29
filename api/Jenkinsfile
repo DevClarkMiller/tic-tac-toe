@@ -35,13 +35,27 @@ pipeline {
         JENKINS = 'Jenkinsfile'
         CHANGE_SRC = 'api/src/**'
         DIR = 'api'
-        PROJECT_NAME = 'tic-tac-toe'
+        SOLUTION_NAME = 'tic-tac-toe'
+        PROJECT_NAME = 'tic-tac-toe.api'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Load secrets') {
+            when { 
+				changeset "${DIR}/**"
+				expression { return params.All || params.Dev || params.Prod }	
+			}
+			steps {
+                dir("${DIR}") {
+                    loadAppsettings(PROJECT_NAME, 'Development')
+                    loadAppsettings(PROJECT_NAME, 'Production')
+                }
             }
         }
 
@@ -67,8 +81,8 @@ pipeline {
 			}
             steps {
 				dir(DIR) { 
-                    scpDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'dev')
-                    startDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'dev')
+                    scpDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, SOLUTION_NAME, 'dev')
+                    startDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, SOLUTION_NAME, 'dev')
 				}
             }
         }
@@ -83,8 +97,8 @@ pipeline {
 			}
             steps {
 				dir(DIR) { 
-                    scpDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'prod')
-                    startDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, PROJECT_NAME, 'prod')
+                    scpDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, SOLUTION_NAME, 'prod')
+                    startDockerCompose(SERVER_USERNAME, SERVER_DOMAIN, SOLUTION_NAME, 'prod')
 				}
             }
         }

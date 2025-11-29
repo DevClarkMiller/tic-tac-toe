@@ -28,3 +28,5 @@ api.csproj.user
 bin
 client/.env.development
 client/.env.production
+api/appsettings.Production.json
+api/appsettings.Development.json
