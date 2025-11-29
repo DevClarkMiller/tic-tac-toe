@@ -63,13 +63,14 @@ pipeline {
 				}
 			}
             steps {
-				dir("${DIR}") { 
-					sh 'scp docker-compose-dev.yml miller@sys1.clarkmiller.ca:/home/miller/tic-tac-toe/dev/docker-compose.yml'
-                	sh 'ssh miller@sys1.clarkmiller.ca "cd tic-tac-tie/dev && docker compose up -d"'
+				dir(DIR) { 
+                    scpDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'dev')
+                    startDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'dev')
 				}
             }
         }
 
+        // TODO: GET SERVER USERNAME AND DOMAIN FROM JENKINS ENV
         stage('Deploy Prod') {
 			when {
 				anyOf {
@@ -78,9 +79,9 @@ pipeline {
 				}
 			}
             steps {
-				dir("${DIR}") { 
-					sh 'scp docker-compose-prod.yml miller@sys1.clarkmiller.ca:/home/miller/tic-tac-toe/prod/docker-compose.yml'
-                	sh 'ssh miller@sys1.clarkmiller.ca "cd tic-tac-tie/prod && docker compose up -d"'
+				dir(DIR) { 
+                    scpDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'prod')
+                    startDockerCompose('miller', 'sys1.clarkmiller.ca', 'tic-tac-toe', 'prod')
 				}
             }
         }
