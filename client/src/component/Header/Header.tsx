@@ -1,8 +1,16 @@
+import { AppContext } from 'App';
+import { useContext } from 'react';
 import { login } from 'services/Identity';
 
 const Header = () => {
+	const { isLoggedIn, logout } = useContext(AppContext);
+
 	const onLogin = async () => {
 		await login();
+	};
+
+	const onLogout = async () => {
+		logout();
 	};
 
 	return (
@@ -11,9 +19,9 @@ const Header = () => {
 			<h1 className="text-center">Tic-Tac-Toe</h1>
 			<button
 				className="w-100 w-md-fit btn btn-primary fw-bold"
-				onClick={onLogin}
+				onClick={isLoggedIn ? onLogout : onLogin}
 				style={{ height: 'fit-content' }}>
-				Login
+				{isLoggedIn ? 'Signout' : 'Login'}
 			</button>
 		</header>
 	);

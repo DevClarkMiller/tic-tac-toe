@@ -1,6 +1,7 @@
 import { useMemo, createContext, type ReactNode, useEffect, useState, useCallback } from 'react';
 import * as signalR from '@microsoft/signalr';
 import type { Message } from 'types/Message';
+import { getSignalRConnection } from 'services/Site';
 
 export interface SessionContextType {
 	connection: signalR.HubConnection | null;
@@ -16,11 +17,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	useEffect(() => {
-		const newConnection = new signalR.HubConnectionBuilder()
-			.withUrl('http://localhost:5229/chathub', { withCredentials: true })
-			.withAutomaticReconnect()
-			.build();
-
+		const newConnection = getSignalRConnection();
 		setConnection(newConnection);
 	}, []);
 

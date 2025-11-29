@@ -36,7 +36,7 @@ const useAuth = (options: UseAuthOptions = {}) => {
 		tryLogin();
 	}, [searchParams, setSearchParams, token, getToken, options.optional, tryLogin]);
 
-	return { isLoggedIn };
+	return { isLoggedIn, setIsLoggedIn };
 };
 
 export default useAuth;
