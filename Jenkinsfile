@@ -24,124 +24,50 @@ pipeline {
     }
 
     environment {
-        DEV_CLIENT_HOSTNAME = 'dev.tic-tac-toe.qrcool.ca'
-        PROD_CLIENT_HOSTNAME = 'tic-tac-toe.qrcool.ca'
         USERNAME = credentials('vps-username')
         DOMAIN = credentials('vps-domain')
-        PACKAGE = 'client/package.json'
-        PACKAGE_LOCK = 'client/package-lock.json'
         JENKINS = 'Jenkinsfile'
-        SRC = 'client/src/**'
-        DEV_NGINX_CONF = 'nginx.dev.conf'
-        PROD_NGINX_CONF = 'nginx.prod.conf'
         CLIENT_DIR = 'client'
         API_DIR = 'api'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Determine Changes and run pipelines') {
             steps {
                 checkout scm
-            }
-        }
 
-        stage('Install Dependencies Frontend') {
-            when {
-                anyOf {
-                    changeset SRC
-                    changeset PACKAGE
-                    changeset PACKAGE_LOCK
-                    changeset JENKINS
-                    expression { return params.All || params.Dev || params.Prod }
-                }
-            }
-            steps {
-                dir(CLIENT_DIR) {
-                    sh 'npm install'
-                }
-            }
-        }
+                script {
+                    def services = [
+                        'tic-tac-toe.api': 'api',
+                        'tic-tac-toe.client': 'client',
+                        // 'data': 'data'
+                    ]
 
-        stage('Build Frontend Dev') {
-            when {
-                anyOf {
-                    changeset SRC
-                    changeset PACKAGE
-                    changeset PACKAGE_LOCK
-                    changeset JENKINS
-                    expression { return params.All || params.Dev }
-                }
-            }
-            steps {
-                dir(CLIENT_DIR) {
-                    sh 'npm run build:dev'
-                }
-            }
-        }
+                    def toTrigger = []
+                    services.each { service, path ->
+                        if (params.FORCE_RUN || checkMicroservice(path)) {
+                            echo "Changes detected in ${service}, will trigger pipelines."
+                            toTrigger << service // Add to the list
+                        } else {
+                            echo "No changes in ${service}, skipping."
+                        }
+                    }
 
-        stage('Deploy Frontend Dev') {
-            when {
-                anyOf {
-                    changeset SRC
-                    changeset PACKAGE
-                    changeset PACKAGE_LOCK
-                    changeset JENKINS
-                    expression { return params.All || params.Dev }
-                }
-            }
-            steps {
-                dir(CLIENT_DIR) {
-                    scpBuildFilesToWWW(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME)
-                }
-            }
-        }
-
-        stage('Update Nginx Dev') {
-            when {
-                anyOf {
-                    changeset "${CLIENT_DIR}/${DEV_NGINX_CONF}"
-                    expression { return params.All || params.Dev }
-                }
-            }
-            steps {
-                dir(CLIENT_DIR) {
-                    updateNginxConf(USERNAME, DOMAIN, DEV_CLIENT_HOSTNAME, DEV_NGINX_CONF)
-                }
-            }
-        }
-
-        stage('Build Frontend Prod') {
-            when {
-                expression { return params.All || params.Prod }
-            }
-            steps {
-                dir(CLIENT_DIR) {
-                    sh 'npm run build'
-                }
-            }
-        }
-
-        stage('Deploy Frontend Prod') {
-            when {
-                expression { return params.All || params.Prod }
-            }
-            steps {
-                dir(CLIENT_DIR) {
-                    scpBuildFilesToWWW(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME)
-                }
-            }
-        }
-
-        stage('Update Nginx Prod') {
-            when {
-                anyOf {
-                    changeset "${CLIENT_DIR}/${PROD_NGINX_CONF}"
-                    expression { return params.All || params.Prod }
-                }
-            }
-            steps {
-                dir(CLIENT_DIR) {
-                    updateNginxConf(USERNAME, DOMAIN, PROD_CLIENT_HOSTNAME, PROD_NGINX_CONF)
+                    if (toTrigger.isEmpty()) {
+                        echo "No services changed. Nothing to trigger."
+                    }
+					
+                    toTrigger.each { service -> 
+                        echo "Triggering ${service}..."
+                        build job: service,
+                                parameters: [
+                                    booleanParam(name: 'All', value: params.All),
+									booleanParam(name: 'Dev', value: params.Dev),
+									booleanParam(name: 'Prod', value: params.Prod)
+                                ],
+                                wait: true // set false for async
+                        echo "${service} finished."
+                    }
                 }
             }
         }
