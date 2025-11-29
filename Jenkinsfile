@@ -21,12 +21,6 @@ pipeline {
             defaultValue: false,
             description: 'Runs prod even if there are no changes'
         )
-
-        booleanParam(
-            name: 'DeployProd',
-            defaultValue: false,
-            description: 'Deploys prod'
-        )
     }
 
     environment {
@@ -118,13 +112,7 @@ pipeline {
 
         stage('Build Frontend Prod') {
             when {
-                anyOf {
-                    changeset SRC
-                    changeset PACKAGE
-                    changeset PACKAGE_LOCK
-                    changeset JENKINS
-                    expression { return params.All }
-                }
+                expression { return params.All || params.Prod }
             }
             steps {
                 dir(CLIENT_DIR) {
@@ -135,7 +123,7 @@ pipeline {
 
         stage('Deploy Frontend Prod') {
             when {
-                expression { return params.DeployProd }
+                expression { return params.All || params.Prod }
             }
             steps {
                 dir(CLIENT_DIR) {
