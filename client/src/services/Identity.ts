@@ -25,10 +25,11 @@ export const auth = async (): Promise<FetcherData> => {
 };
 
 // Try auth, if that doesn't work navigate to identity site giving window.location.href as return url
-export const login = async (): Promise<any> => {
+export const login = async (optional: boolean = false): Promise<any> => {
 	const response = await auth();
 
 	if (!response.error) return response.data;
+	if (optional) return false;
 	const newUrl = new URL(IDENTITY_URL);
 	newUrl.searchParams.append('redirectUrl', window.location.href);
 

@@ -1,8 +1,13 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { login } from 'services/Identity';
 
-const useOptionalAuth = () => {
+export interface UseAuthOptions {
+	optional?: boolean;
+}
+
+const useAuth = (options: UseAuthOptions = {}) => {
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const token = searchParams.get('token');
 
@@ -21,12 +26,17 @@ const useOptionalAuth = () => {
 		return token;
 	}, [searchParams, setSearchParams, token]);
 
+	const tryLogin = useCallback(async () => {
+		const data = await login(options.optional);
+		if (data) setIsLoggedIn(true);
+	}, [options]);
+
 	useEffect(() => {
 		getToken();
-		if (getToken()) login();
-	}, [searchParams, setSearchParams, token, getToken]);
+		tryLogin();
+	}, [searchParams, setSearchParams, token, getToken, options.optional, tryLogin]);
 
-	return;
+	return { isLoggedIn };
 };
 
-export default useOptionalAuth;
+export default useAuth;

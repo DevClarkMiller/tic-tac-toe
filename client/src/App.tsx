@@ -8,11 +8,11 @@ import Grid from './component/Grid/Grid';
 import { GridContextProvider } from './context/GridContext';
 import GameTools from './component/GameTools/GameTools';
 import Chat from '@components/Chat/Chat';
-import useOptionalAuth from 'hooks/useOptionalAuth';
+import useOptionalAuth from 'hooks/Auth/useAuth';
 import Header from '@components/Header/Header';
 
 const App = () => {
-	useOptionalAuth();
+	useOptionalAuth({ optional: true });
 
 	return (
 		<GridContextProvider>
