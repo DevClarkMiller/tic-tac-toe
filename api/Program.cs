@@ -53,12 +53,18 @@ namespace api
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger(c => {
+                // This changes the JSON endpoint
+                c.RouteTemplate = "api/swagger/{documentName}/swagger.json";
+            });
+
+            app.UseSwaggerUI(c => {
+                // This changes the UI path
+                c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "My API V1");
+
+                // Serve the UI at /api/swagger
+                c.RoutePrefix = "api/swagger";
+            });
 
             app.UseHttpsRedirection();
             app.UseRouting();
