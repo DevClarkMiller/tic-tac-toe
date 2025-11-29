@@ -1,7 +1,7 @@
 services:
   prod-tic-tac-toe-idenity:
     image: tic-tac-toe:latest
-    container_name: prod-tic-tac-toe-identity
+    container_name: prod-tic-tac-toe
     ports:
       - "6418:8080"
       - "6419:8081"
