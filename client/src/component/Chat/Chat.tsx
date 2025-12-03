@@ -14,13 +14,13 @@ const UserMessage = ({ message }: { message: Message }) => {
 	);
 };
 
-// eslint-disable-next-line no-unused-vars
-const MessageInput = ({ sendMessage }: { sendMessage: (msg: string) => void }) => {
+const MessageInput = ({ sendMessage }: { sendMessage: (_msg: string) => void }) => {
 	const [text, setText] = useState<string>('');
 
 	const onSend = (e: any) => {
 		if (e.preventDefault) e.preventDefault();
 		if (text) sendMessage(text);
+		setText('');
 	};
 
 	return (
@@ -46,17 +46,18 @@ const MessageInput = ({ sendMessage }: { sendMessage: (msg: string) => void }) =
 };
 
 const Chat = () => {
-	const { connection, messages, sendMessage } = useContext(SessionContext);
+	const { isConnected, messages, sendMessage } = useContext(SessionContext);
 
-	if (!connection || !connection?.connectionId) return null;
+	if (!isConnected) return null;
 
 	return (
 		<div className="w-100">
 			<h2>Chat</h2>
-			<div data-bs-spy="scroll"></div>
-			{messages.map((message: Message) => (
-				<UserMessage key={message.user + '-' + message.dataReceived} message={message} />
-			))}
+			<div className="overflow-scroll" data-bs-spy="scroll" style={{ maxHeight: '200px' }}>
+				{messages.map((message: Message) => (
+					<UserMessage key={message.user + '-' + message.dataReceived} message={message} />
+				))}
+			</div>
 			<MessageInput sendMessage={sendMessage} />
 		</div>
 	);

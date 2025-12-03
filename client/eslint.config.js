@@ -1,47 +1,48 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint, { parser } from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
-import pluginReactHooks  from "eslint-plugin-react-hooks";
-import prettierPlugin from "eslint-plugin-prettier";
-import prettier from "eslint-config-prettier";
-import importPlugin from "eslint-plugin-import";
-import { defineConfig } from "eslint/config";
+import js from '@eslint/js';
+import globals from 'globals';
+import tseslint, { parser } from 'typescript-eslint';
+import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
+import prettierPlugin from 'eslint-plugin-prettier';
+import prettier from 'eslint-config-prettier';
+import importPlugin from 'eslint-plugin-import';
+import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
 	{
-    ignores: ["eslint.config.js"], 
-  },
+		ignores: ['eslint.config.js'],
+	},
 
 	js.configs.recommended,
-	{ 
-		files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-		languageOptions: { 
+	{
+		files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+		languageOptions: {
 			parser: tseslint.parser,
-			ecmaVersion: "latest",
+			ecmaVersion: 'latest',
 			sourceType: 'module',
 			globals: { ...globals.browser, ...globals.node },
 			parserOptions: {
-        		ecmaFeatures: { jsx: true },
+				ecmaFeatures: { jsx: true },
 				projectService: true,
-      		},
+			},
 		},
-		plugins: { 
+		plugins: {
 			import: importPlugin,
 			prettier: prettierPlugin,
 			react: pluginReact,
-			"react-hooks": pluginReactHooks,
+			'react-hooks': pluginReactHooks,
 			'@typescript-eslint': tseslint.plugin,
 		},
 		settings: {
-			react: { version: "detect" },
+			react: { version: 'detect' },
 			'import/resolver': {
 				typescript: {
-					project: './tsconfig.json'
-				}
-			}
+					project: './tsconfig.json',
+				},
+			},
 		},
 		rules: {
+			'no-unused-vars': 'off',
 			// Prettier formatting
 			'prettier/prettier': 'error',
 			// TypeScript-specific rules
@@ -73,5 +74,5 @@ export default defineConfig([
 			'react/jsx-handler-names': ['error', { eventHandlerPrefix: 'handle', eventHandlerPropPrefix: 'on' }],
 		},
 	},
-	prettier
+	prettier,
 ]);

@@ -38,6 +38,10 @@
 	.w-md-fit {
 		width: fit-content !important;
 	}
+
+	.w-md-100 {
+		width: 100% !important;
+	}
 }
 
 .read-the-docs {

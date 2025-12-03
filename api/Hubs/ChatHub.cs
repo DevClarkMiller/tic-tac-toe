@@ -2,6 +2,12 @@
 
 namespace api.Hubs {
     public class ChatHub : Hub {
+        public async Task<string> CreateSession() {
+            string sessionId = Guid.NewGuid().ToString();
+            await JoinSession(sessionId);
+            return sessionId;
+        }
+
         public async Task JoinSession(string sessionId) {
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         }

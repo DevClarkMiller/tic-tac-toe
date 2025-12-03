@@ -4,6 +4,7 @@ import { Coord } from '@models/Coord';
 import type { IMemento } from '@models/IMemento';
 import { CellState } from '@game/CellState';
 import { Difficulty } from './Difficulty';
+import { shuffle } from '@helpers/ArrayHelper';
 
 export class Game {
 	private _rows: number = 0;
@@ -143,7 +144,7 @@ export class Game {
 		}
 
 		// If the number of possible moves is 0 and there's no winner, game over
-		return this.GetPossibleMoves().size == 0;
+		return this.GetPossibleMoves().length == 0;
 	}
 
 	public MakeMove(coord: Coord) {
@@ -157,15 +158,15 @@ export class Game {
 	}
 
 	public GetPossibleMoves() {
-		const moves = new Set<Coord>();
+		const moves: Coord[] = [];
 
 		for (let r = 0; r < this.Rows; r++) {
 			for (let c = 0; c < this.Cols; c++) {
-				if (this._grid[r][c] == CellState.Empty) moves.add(new Coord(c, r));
+				if (this._grid[r][c] == CellState.Empty) moves.push(new Coord(c, r));
 			}
 		}
 
-		return moves;
+		return shuffle(moves);
 	}
 
 	public CalculateScoreAndWinner(maximizingSym: CellState) {

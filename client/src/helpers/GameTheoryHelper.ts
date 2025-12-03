@@ -22,7 +22,7 @@ export const minmax = (
 
 	const possibleMoves = game.GetPossibleMoves();
 
-	if (possibleMoves.size === 0) return { move: null, eval: evaluate(game, maximizingSym) };
+	if (possibleMoves.length === 0) return { move: null, eval: evaluate(game, maximizingSym) };
 
 	let bestMove: Coord | null = null;
 

@@ -4,16 +4,23 @@ import type { Message } from 'types/Message';
 import { getSignalRConnection } from 'services/Site';
 
 export interface SessionContextType {
+	isConnected: boolean;
 	connection: signalR.HubConnection | null;
+	sessionId: string;
 	messages: Message[];
-	// eslint-disable-next-line no-unused-vars
-	sendMessage: (msg: string) => Promise<void>;
+
+	sendMessage: (_msg: string) => Promise<void>;
+	createSession: () => Promise<void>;
+	joinSession: (_sessionId: string) => Promise<void>;
+	leaveSession: () => Promise<void>;
 }
 
 export const SessionContext = createContext<SessionContextType>({} as SessionContextType);
 
 export const SessionContextProvider = ({ children }: { children: ReactNode }) => {
+	const [isConnected, setIsConnected] = useState(false);
 	const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
+	const [sessionId, setSessionId] = useState('');
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	useEffect(() => {
@@ -34,18 +41,39 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 
 	const sendMessage = useCallback(
 		async (msg: string) => {
-			await connection?.invoke('SendMessage', 'Clark', msg);
+			await connection?.invoke('SendMessage', 'Clark', msg, sessionId);
+		},
+		[connection, sessionId]
+	);
+
+	const createSession = useCallback(async () => {
+		const newSessionId = await connection?.invoke('CreateSession');
+		setSessionId(newSessionId);
+		setIsConnected(true);
+	}, [connection]);
+
+	const joinSession = useCallback(
+		async (newSessionId: string) => {
+			await connection?.invoke('JoinSession', newSessionId);
+			setSessionId(newSessionId);
+			setIsConnected(true);
 		},
 		[connection]
 	);
+
+	const leaveSession = useCallback(async () => {
+		await connection?.invoke('LeaveSession', sessionId);
+		setIsConnected(false);
+		setSessionId('');
+	}, [connection, sessionId]);
 
 	useEffect(() => {
 		if (connection) startConnection();
 	}, [connection, startConnection]);
 
 	const value = useMemo(() => {
-		return { connection, messages, sendMessage };
-	}, [connection, messages, sendMessage]);
+		return { sessionId, isConnected, connection, messages, createSession, joinSession, leaveSession, sendMessage };
+	}, [connection, createSession, isConnected, joinSession, leaveSession, messages, sendMessage, sessionId]);
 
 	return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };
