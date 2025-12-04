@@ -45,7 +45,7 @@ const App = () => {
 		<AppContext.Provider value={value}>
 			<SessionContextProvider>
 				<GridContextProvider>
-					<div className="vh-100 vw-100 d-flex align-items-center flex-column p-3 gap-2">
+					<div className="app vh-100 w-100 d-flex align-items-center flex-column p-3 gap-2">
 						{isLoading ? (
 							<div className="d-flex vh-100 align-items-center">
 								<BallTriangle stroke="black" />
@@ -54,7 +54,7 @@ const App = () => {
 							<>
 								<Header />
 								<div
-									className="w-75 d-flex flex-column flex-grow-1 justify-content-between align-items-center gap-2"
+									className="h-100 w-75 d-flex flex-column flex-grow-1 justify-content-between align-items-center gap-2"
 									style={{ maxWidth: '650px' }}>
 									<GameTools />
 									{isLoggedIn && <SessionManager />}

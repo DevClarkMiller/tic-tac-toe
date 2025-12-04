@@ -27,15 +27,15 @@ const Cell = ({ value, row, col }: CellProps) => {
 		}
 	}, [value]);
 
-	const disabled = game.IsGameOver;
+	const btnType = !game.IsGameOver ? 'btn-secondary' : 'btn-danger';
 
 	return (
-		<div className="p-0 game-cell w-100">
+		<div className="p-0 m-0 w-100">
 			<button
-				className={`card btn ${!disabled ? 'btn-secondary' : 'btn-danger'} w-100 h-100 border-1 shadow-sm d-flex align-items-center justify-content-center m-0 p-0`}
+				className={`card btn ${btnType} d-flex w-100 h-100 border-1 shadow-sm align-items-center justify-content-center m-0 p-0`}
 				style={{ aspectRatio: '1 / 1', overflow: 'hidden' }}
 				onClick={() => onCellClick(row, col)}>
-				<h5 className="p-0 m-0 text-center w-100">{text}</h5>
+				<h5 className="w-100 p-0 m-0 text-center">{text}</h5>
 			</button>
 		</div>
 	);

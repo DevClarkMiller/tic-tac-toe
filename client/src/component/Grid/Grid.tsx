@@ -10,7 +10,7 @@ const Grid = () => {
 	const { game } = useContext(GridContext);
 
 	return (
-		<div className="container-fluid w-100 h-100 p-0" id="grid">
+		<div className="w-100 h-100 p-0 m-0" id="grid">
 			{game.Grid?.map((values, row) => (
 				<Row key={row} values={values} row={row} />
 			))}
