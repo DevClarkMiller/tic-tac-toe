@@ -1,6 +1,6 @@
-import { createContext, useCallback, useMemo } from 'react';
+import { createContext, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
+import { getUser, IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
 import { useAuth } from 'helios-identity-sdk';
 
 // CSS
@@ -40,6 +40,13 @@ const App = () => {
 	const value = useMemo((): AppContextType => {
 		return { isLoggedIn, logout };
 	}, [isLoggedIn, logout]);
+
+	useEffect(() => {
+		(async () => {
+			const response = await getUser();
+			console.log(response.data);
+		})();
+	}, []);
 
 	return (
 		<AppContext.Provider value={value}>
