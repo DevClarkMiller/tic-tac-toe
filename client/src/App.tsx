@@ -1,6 +1,6 @@
-import { createContext, useCallback, useEffect, useMemo } from 'react';
+import { createContext, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getUser, IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
+import { IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
 import { useAuth } from 'helios-identity-sdk';
 
 // CSS
@@ -17,7 +17,6 @@ import Chat from '@components/Chat/Chat';
 import Header from '@components/Header/Header';
 import SessionContextProvider from '@context/SessionContext';
 import SessionManager from '@components/SessionManager/SessionManager';
-import { fetcher } from 'helios-utilities-sdk';
 
 export interface AppContextType {
 	isLoggedIn: boolean;
