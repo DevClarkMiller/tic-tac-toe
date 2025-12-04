@@ -6,86 +6,92 @@ using System.Text;
 
 namespace api
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var builder = WebApplication.CreateBuilder(args);
 
-            LoadAppsettings(builder);
+			LoadAppsettings(builder);
 
-            // Add services to the container.
-            builder.Services.AddSignalR();
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+			// Add services to the container.
+			builder.Services.AddSignalR();
+			builder.Services.AddControllers();
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddSwaggerGen();
 
-            var appSettings = builder.Configuration.GetSection("AppSettings").GetValue<string>("Secret");
-            var key = Encoding.ASCII.GetBytes(appSettings!);
+			var appSettings = builder.Configuration.GetSection("AppSettings").GetValue<string>("Secret");
+			var key = Encoding.ASCII.GetBytes(appSettings!);
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowClient", policy =>
-                {
-                    policy.WithOrigins("http://localhost:5173")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials(); 
-                });
-            });
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("AllowClient", policy =>
+				{
+					policy.WithOrigins("http://localhost:5173")
+						  .AllowAnyHeader()
+						  .AllowAnyMethod()
+						  .AllowCredentials();
+				});
+			});
 
-            builder.Services.AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-               .AddJwtBearer(options => {
-                   options.RequireHttpsMetadata = false;
-                   options.SaveToken = true;
-                   options.TokenValidationParameters = new TokenValidationParameters {
-                       ValidateIssuerSigningKey = true,
-                       IssuerSigningKey = new SymmetricSecurityKey(key),
-                       ValidateIssuer = false,
-                       ValidateAudience = false
-                   };
-               });
+			builder.Services.AddAuthentication(options =>
+			{
+				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+			   .AddJwtBearer(options =>
+			   {
+				   options.RequireHttpsMetadata = false;
+				   options.SaveToken = true;
+				   options.TokenValidationParameters = new TokenValidationParameters
+				   {
+					   ValidateIssuerSigningKey = true,
+					   IssuerSigningKey = new SymmetricSecurityKey(key),
+					   ValidateIssuer = false,
+					   ValidateAudience = false
+				   };
+			   });
 
-            var app = builder.Build();
+			var app = builder.Build();
 
-            app.UseSwagger(c => {
-                // This changes the JSON endpoint
-                c.RouteTemplate = "api/swagger/{documentName}/swagger.json";
-            });
+			app.UseSwagger(c =>
+			{
+				// This changes the JSON endpoint
+				c.RouteTemplate = "api/swagger/{documentName}/swagger.json";
+			});
 
-            app.UseSwaggerUI(c => {
-                // This changes the UI path
-                c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "My API V1");
+			app.UseSwaggerUI(c =>
+			{
+				// This changes the UI path
+				c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "My API V1");
 
-                // Serve the UI at /api/swagger
-                c.RoutePrefix = "api/swagger";
-            });
+				// Serve the UI at /api/swagger
+				c.RoutePrefix = "api/swagger";
+			});
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
+			app.UseHttpsRedirection();
+			app.UseRouting();
 
-            app.UseCors("AllowClient");
+			app.UseCors("AllowClient");
 
-            app.MapHub<ChatHub>("/chathub");
+			app.MapHub<ChatHub>("/socket/chathub");
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+			app.UseAuthentication();
+			app.UseAuthorization();
 
-            app.MapControllers();
+			app.MapControllers();
 
-            app.Run();
-        }
+			app.Run();
+		}
 
-        private static WebApplicationBuilder LoadAppsettings(WebApplicationBuilder builder) {
-            builder.Configuration
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json");
+		private static WebApplicationBuilder LoadAppsettings(WebApplicationBuilder builder)
+		{
+			builder.Configuration
+				.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json");
 
-            return builder;
-        }
-    }
+			return builder;
+		}
+	}
 }

@@ -11,7 +11,7 @@ export const createSession = async (): Promise<FetcherData> => {
 
 export const getSignalRConnection = () => {
 	return new signalR.HubConnectionBuilder()
-		.withUrl(`${API_URL}/chathub`, { withCredentials: true })
+		.withUrl(`${API_URL}/socket/chathub`, { withCredentials: true })
 		.withAutomaticReconnect()
 		.build();
 };
