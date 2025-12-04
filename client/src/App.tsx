@@ -17,6 +17,7 @@ import Chat from '@components/Chat/Chat';
 import Header from '@components/Header/Header';
 import SessionContextProvider from '@context/SessionContext';
 import SessionManager from '@components/SessionManager/SessionManager';
+import { fetcher } from 'helios-utilities-sdk';
 
 export interface AppContextType {
 	isLoggedIn: boolean;
@@ -40,13 +41,6 @@ const App = () => {
 	const value = useMemo((): AppContextType => {
 		return { isLoggedIn, logout };
 	}, [isLoggedIn, logout]);
-
-	useEffect(() => {
-		(async () => {
-			const response = await getUser();
-			console.log(response.data);
-		})();
-	}, []);
 
 	return (
 		<AppContext.Provider value={value}>
