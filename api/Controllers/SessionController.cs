@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers {
@@ -10,7 +9,7 @@ namespace api.Controllers {
         [HttpPost]
         public IActionResult CreateSession() {
             var sessionId = Guid.NewGuid().ToString();
-            return Ok(sessionId);
+            return Ok(new{ sessionId });
         }
     }
 }

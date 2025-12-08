@@ -5,11 +5,12 @@ const SITE_URL = window.location.hostname == 'localhost' ? 'https://localhost' :
 const API_URL = import.meta.env.VITE_SITE_API_URL ?? SITE_URL;
 
 export const createSession = async (): Promise<FetcherData> => {
-	const data = await poster(`${API_URL}/api/session`, null);
-	return data;
+	const resp = await poster(`${API_URL}/api/session`, null);
+	return (resp.data as any).sessionId;
 };
 
 export const getSignalRConnection = () => {
+	console.log(API_URL);
 	return new signalR.HubConnectionBuilder()
 		.withUrl(`${API_URL}/socket/chathub`, { withCredentials: true })
 		.withAutomaticReconnect()

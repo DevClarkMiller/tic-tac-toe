@@ -1,7 +1,7 @@
-import { createContext, useCallback, useMemo } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
-import { useAuth } from 'helios-identity-sdk';
+import { getUser, IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
+import { useAuth, type User } from 'helios-identity-sdk';
 
 // CSS
 import './App.css';
@@ -20,6 +20,7 @@ import SessionManager from '@components/SessionManager/SessionManager';
 
 export interface AppContextType {
 	isLoggedIn: boolean;
+	user: User | null;
 	logout: () => void;
 }
 
@@ -27,6 +28,7 @@ export const AppContext = createContext<AppContextType>({} as AppContextType);
 
 const App = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [user, setUser] = useState<User | null>(null);
 	const { isLoading, isLoggedIn, setIsLoggedIn } = useAuth(IDENTITY_URL, searchParams, setSearchParams, {
 		optional: true,
 		identityApiUrl: IDENTITY_API_URL,
@@ -37,9 +39,17 @@ const App = () => {
 		setIsLoggedIn(false);
 	}, [setIsLoggedIn]);
 
+	useEffect(() => {
+		if (isLoggedIn) {
+			(async () => {
+				setUser(await getUser());
+			})();
+		}
+	}, [isLoggedIn]);
+
 	const value = useMemo((): AppContextType => {
-		return { isLoggedIn, logout };
-	}, [isLoggedIn, logout]);
+		return { user, isLoggedIn, logout };
+	}, [user, isLoggedIn, logout]);
 
 	return (
 		<AppContext.Provider value={value}>

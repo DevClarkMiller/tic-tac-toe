@@ -3,6 +3,7 @@ import * as signalR from '@microsoft/signalr';
 import type { Message } from 'types/Message';
 import { getSignalRConnection } from 'services/Site';
 import { AppContext } from 'App';
+import type { User } from 'helios-identity-sdk';
 
 export interface SessionContextType {
 	isConnected: boolean;
@@ -10,7 +11,7 @@ export interface SessionContextType {
 	sessionId: string;
 	messages: Message[];
 
-	sendMessage: (_msg: string) => Promise<void>;
+	sendMessage: (_msg: string, _usr: User) => Promise<void>;
 	createSession: () => Promise<void>;
 	joinSession: (_sessionId: string) => Promise<void>;
 	leaveSession: () => Promise<void>;
@@ -45,8 +46,8 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	}, [connection]);
 
 	const sendMessage = useCallback(
-		async (msg: string) => {
-			await connection?.invoke('SendMessage', 'Clark', msg, sessionId);
+		async (msg: string, user: User) => {
+			await connection?.invoke('SendMessage', user.id, msg, sessionId);
 		},
 		[connection, sessionId]
 	);

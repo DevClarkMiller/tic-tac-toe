@@ -1,6 +1,8 @@
 import { useContext, useState } from 'react';
 import type { Message } from 'types/Message';
 import { SessionContext } from '@context/SessionContext';
+import { AppContext } from 'App';
+import type { User } from 'helios-identity-sdk';
 
 const UserMessage = ({ message }: { message: Message }) => {
 	return (
@@ -14,12 +16,12 @@ const UserMessage = ({ message }: { message: Message }) => {
 	);
 };
 
-const MessageInput = ({ sendMessage }: { sendMessage: (_msg: string) => void }) => {
+const MessageInput = ({ user, sendMessage }: { user: User; sendMessage: (_msg: string, _user: User) => void }) => {
 	const [text, setText] = useState<string>('');
 
 	const onSend = (e: any) => {
 		if (e.preventDefault) e.preventDefault();
-		if (text) sendMessage(text);
+		if (text) sendMessage(text, user);
 		setText('');
 	};
 
@@ -47,6 +49,7 @@ const MessageInput = ({ sendMessage }: { sendMessage: (_msg: string) => void }) 
 
 const Chat = () => {
 	const { isConnected, messages, sendMessage } = useContext(SessionContext);
+	const { user } = useContext(AppContext);
 
 	if (!isConnected) return null;
 
@@ -58,7 +61,7 @@ const Chat = () => {
 					<UserMessage key={message.user + '-' + message.dataReceived} message={message} />
 				))}
 			</div>
-			<MessageInput sendMessage={sendMessage} />
+			<MessageInput user={user!} sendMessage={sendMessage} />
 		</div>
 	);
 };
