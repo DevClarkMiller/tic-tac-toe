@@ -1,7 +1,8 @@
-import { useMemo, createContext, type ReactNode, useEffect, useState, useCallback } from 'react';
+import { useMemo, createContext, type ReactNode, useEffect, useState, useCallback, useContext } from 'react';
 import * as signalR from '@microsoft/signalr';
 import type { Message } from 'types/Message';
 import { getSignalRConnection } from 'services/Site';
+import { AppContext } from 'App';
 
 export interface SessionContextType {
 	isConnected: boolean;
@@ -23,10 +24,14 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const [sessionId, setSessionId] = useState('');
 	const [messages, setMessages] = useState<Message[]>([]);
 
+	const { isLoggedIn } = useContext(AppContext);
+
 	useEffect(() => {
-		const newConnection = getSignalRConnection();
-		setConnection(newConnection);
-	}, []);
+		if (isLoggedIn) {
+			const newConnection = getSignalRConnection();
+			setConnection(newConnection);
+		}
+	}, [isLoggedIn]);
 
 	const startConnection = useCallback(async () => {
 		try {
