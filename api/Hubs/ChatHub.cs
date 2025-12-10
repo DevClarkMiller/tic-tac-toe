@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.SignalR;
 
 namespace api.Hubs {
-    public class ChatHub(GameService gameService) : Hub {
-        private readonly GameService _gameService = gameService;
+    public class ChatHub(IGameService gameService) : Hub {
+        private readonly IGameService _gameService = gameService;
 
         public async Task<string> CreateSession() {
             string sessionId = Guid.NewGuid().ToString();

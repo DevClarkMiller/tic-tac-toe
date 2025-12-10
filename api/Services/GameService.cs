@@ -2,14 +2,14 @@
 
 namespace api.Services {
     public class GameService : IGameService {
-        public Dictionary<string, GameInfo> Games { get; set; } = new();
+        private Dictionary<string, GameInfo> _games = new();
 
         public void CreateGame(string username, string sessionId) {
             GameInfo game = new(sessionId);
         }
 
         public bool JoinGame(string username, string sessionId) {
-            var gameExists = Games.TryGetValue(sessionId, out var game);
+            var gameExists = _games.TryGetValue(sessionId, out var game);
             if (!gameExists || game is null) return false;
 
             if (game.PlayerConnectionIds.Count == 2) return false;
@@ -18,17 +18,19 @@ namespace api.Services {
         }
 
         public void LeaveGame(string username, string sessionId) {
-            var gameExists = Games.TryGetValue(sessionId, out var game);
+            var gameExists = _games.TryGetValue(sessionId, out var game);
             if (!gameExists || game is null || !game.PlayerConnectionIds.Contains(username)) return;
 
             game.PlayerConnectionIds.Remove(username);
             
             if (game.PlayerConnectionIds.Count == 0)
-                Games.Remove(sessionId);
+                _games.Remove(sessionId);
         }
     }
 
     public interface IGameService {
+        void CreateGame(string username, string sessionId);
         bool JoinGame(string username, string sessionId);
+        void LeaveGame(string username, string sessionId);
     }
 }
