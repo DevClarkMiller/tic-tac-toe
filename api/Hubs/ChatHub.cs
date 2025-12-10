@@ -8,8 +8,7 @@ namespace api.Hubs {
         public async Task<string> CreateSession() {
             string sessionId = Guid.NewGuid().ToString();
             await JoinSession(sessionId);
-            _gameService.CreateGame(Context.ConnectionId, sessionId);
-            return sessionId;
+            return _gameService.CreateGame(Context.ConnectionId, sessionId);
         }
 
         public async Task<bool> JoinSession(string sessionId) {
