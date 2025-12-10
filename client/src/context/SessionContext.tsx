@@ -6,6 +6,7 @@ import { AppContext } from 'App';
 import type { User } from 'helios-identity-sdk';
 import { getUsername } from '@helpers/UserHelper';
 import { GridContext } from './GridContext';
+import type { PlayerInfo } from '@models/PlayerInfo';
 
 export interface SessionContextType {
 	isConnected: boolean;
@@ -30,7 +31,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	const { isLoggedIn } = useContext(AppContext);
-	const { playerSymbol } = useContext(GridContext);
+	const { game, setPlayerSymbol, playerSymbol } = useContext(GridContext);
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -59,11 +60,16 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 		[connection, sessionId]
 	);
 
+	const getPlayerInfo = useCallback(async () => {
+		return (await connection?.invoke('GetPlayerInfo', sessionId)!) as PlayerInfo | null;
+	}, [connection, sessionId]);
+
 	const createSession = useCallback(async () => {
 		const newSessionId = await connection?.invoke('CreateSession', playerSymbol);
 		setSessionId(newSessionId);
 		setInGame(true);
-	}, [connection, playerSymbol]);
+		game.GameStarted = true;
+	}, [connection, game, playerSymbol]);
 
 	const joinSession = useCallback(
 		async (newSessionId: string) => {
@@ -71,8 +77,13 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 			if (!joinedSession) return;
 			setSessionId(newSessionId);
 			setInGame(true);
+			game.GameStarted = true;
+
+			const playerInfo = await getPlayerInfo();
+			console.log(playerInfo);
+			if (playerInfo) setPlayerSymbol(playerInfo.symbol);
 		},
-		[connection]
+		[connection, game, getPlayerInfo, setPlayerSymbol]
 	);
 
 	const leaveSession = useCallback(async () => {

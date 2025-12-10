@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 
 import PlayerSymSelector from './PlayerSymSelector';
 import RefreshButton from './RefreshButton';
@@ -12,8 +12,6 @@ const GameTools = () => {
 	const { game, playerSymbol, setGame, setPlayerSymbol } = useContext(GridContext);
 	const { inGame } = useContext(SessionContext);
 
-	const gameStarted = useMemo(() => game.GameStarted, [game]);
-
 	return (
 		<div className="row w-100 mb-2 g-2 justify-content-center">
 			<div className="col-12 col-md-2 d-flex justify-content-md-center">
@@ -21,7 +19,7 @@ const GameTools = () => {
 			</div>
 			<div className="col-12 col-md-4">
 				<PlayerSymSelector
-					gameStarted={gameStarted}
+					gameStarted={game.GameStarted}
 					playerSymbol={playerSymbol}
 					setPlayerSymbol={setPlayerSymbol}
 				/>
