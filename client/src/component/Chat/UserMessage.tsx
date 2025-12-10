@@ -1,6 +1,5 @@
 import { getUsername } from '@helpers/UserHelper';
 import { AppContext } from 'App';
-import type { User } from 'helios-identity-sdk';
 import { useContext, useMemo } from 'react';
 import type { FontControlType } from 'types/FontControlType';
 import type { Message } from 'types/Message';
@@ -14,16 +13,11 @@ const MessageHeader = ({
 	message: Message;
 	fontSize: number;
 }) => {
+	const username = isCurrentUser ? 'You' : message.user;
+
 	return (
 		<div className="text-secondary h6 p-0 m-0" style={{ fontSize: `${fontSize}px` }}>
-			{isCurrentUser ? (
-				<>You</>
-			) : (
-				<>
-					<span>{message.dateReceived.toLocaleTimeString()}</span> -
-					<span className="fw-bold">{message.user}</span>
-				</>
-			)}
+			<span>{message.dateReceived.toLocaleTimeString()}</span> - <span className="fw-bold">{username}</span>
 		</div>
 	);
 };
