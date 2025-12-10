@@ -5,7 +5,6 @@ import { getSignalRConnection } from 'services/Site';
 import { AppContext } from 'App';
 import type { User } from 'helios-identity-sdk';
 import { getUsername } from '@helpers/UserHelper';
-import { GridContext } from './GridContext';
 import type { PlayerInfo } from '@models/PlayerInfo';
 
 export interface SessionContextType {
@@ -19,6 +18,7 @@ export interface SessionContextType {
 	createSession: () => Promise<void>;
 	joinSession: (_sessionId: string) => Promise<void>;
 	leaveSession: () => Promise<void>;
+	sendMove: (row: number, column: number) => Promise<void>;
 }
 
 export const SessionContext = createContext<SessionContextType>({} as SessionContextType);
@@ -30,8 +30,8 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const [sessionId, setSessionId] = useState('');
 	const [messages, setMessages] = useState<Message[]>([]);
 
-	const { isLoggedIn } = useContext(AppContext);
-	const { game, setPlayerSymbol, playerSymbol } = useContext(GridContext);
+	const { isLoggedIn, playerSymbol, setPlayerSymbol } = useContext(AppContext);
+	const { game } = useContext(AppContext);
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -60,9 +60,15 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 		[connection, sessionId]
 	);
 
+	const sendMove = useCallback(
+		async (row: number, column: number) => {
+			await connection?.invoke('SendGameMove', row, column, sessionId);
+		},
+		[connection, sessionId]
+	);
+
 	const getPlayerInfo = useCallback(
 		async (sessId: string) => {
-			console.log(sessId);
 			return (await connection?.invoke('GetPlayerInfo', sessId)!) as PlayerInfo | null;
 		},
 		[connection]
@@ -112,8 +118,20 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 			joinSession,
 			leaveSession,
 			sendMessage,
+			sendMove,
 		};
-	}, [connection, createSession, inGame, isConnected, joinSession, leaveSession, messages, sendMessage, sessionId]);
+	}, [
+		connection,
+		createSession,
+		inGame,
+		isConnected,
+		joinSession,
+		leaveSession,
+		messages,
+		sendMessage,
+		sendMove,
+		sessionId,
+	]);
 
 	return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };

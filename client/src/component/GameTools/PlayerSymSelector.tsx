@@ -1,4 +1,4 @@
-import React, { useState, type JSX } from 'react';
+import React, { useEffect, useState, type JSX } from 'react';
 import { CellState } from '@game/CellState';
 
 import Select from 'react-select';
@@ -11,6 +11,11 @@ interface Option {
 	label: JSX.Element;
 }
 
+const options: Option[] = [
+	{ value: CellState.Cross, label: <RxCross1 /> },
+	{ value: CellState.Circle, label: <RxCircle /> },
+];
+
 const PlayerSymSelector = ({
 	gameStarted,
 	playerSymbol,
@@ -20,14 +25,13 @@ const PlayerSymSelector = ({
 	playerSymbol: CellState;
 	setPlayerSymbol: React.Dispatch<React.SetStateAction<CellState>>;
 }) => {
-	const options: Option[] = [
-		{ value: CellState.Cross, label: <RxCross1 /> },
-		{ value: CellState.Circle, label: <RxCircle /> },
-	];
+	const getOption = (symbol: CellState) => options.find(opt => opt.value === symbol) ?? options[0];
 
-	const [selectedOption, setSelectedOption] = useState<Option>(
-		options.find(opt => opt.value === playerSymbol) ?? options[0]
-	);
+	const [selectedOption, setSelectedOption] = useState<Option>(getOption(playerSymbol));
+
+	useEffect(() => {
+		if (playerSymbol != selectedOption.value) setSelectedOption(getOption(playerSymbol));
+	}, [playerSymbol, selectedOption]);
 
 	const onSelect = (option: Option | null) => {
 		if (!option || gameStarted) return;

@@ -1,24 +1,37 @@
-import React, { useMemo, createContext, type ReactNode, useState, useEffect } from 'react';
+import { useMemo, createContext, type ReactNode, useEffect, useContext, useCallback } from 'react';
 
 // HELPERS
 import { CellState, cellStateName } from '@game/CellState';
 import { determineMove } from '@helpers/GameTheoryHelper';
 import { Game } from '@game/Game';
 
+import { AppContext } from 'App';
+import { SessionContext } from './SessionContext';
+
 export interface GridContextType {
-	game: Game;
-	playerSymbol: CellState;
-	setPlayerSymbol: React.Dispatch<React.SetStateAction<CellState>>;
-	setGame: React.Dispatch<React.SetStateAction<Game>>;
-	// eslint-disable-next-line no-unused-vars
-	onCellClick: (row: number, col: number) => void;
+	onCellClick: (_row: number, _col: number) => void;
 }
 
 export const GridContext = createContext<GridContextType>({} as GridContextType);
 
 export const GridContextProvider = ({ children }: { children: ReactNode }) => {
-	const [game, setGame] = useState<Game>(new Game(3, 3));
-	const [playerSymbol, setPlayerSymbol] = useState<CellState>(CellState.Cross);
+	const { game, playerSymbol, setGame } = useContext(AppContext);
+	const { connection, inGame, sendMove } = useContext(SessionContext);
+
+	const onReceiveGameMove = useCallback(
+		(row: number, col: number, symbol: CellState) => {
+			const gameToUpdate = game.Clone();
+			gameToUpdate.MakeMove({ x: col, y: row }, symbol);
+			setGame(gameToUpdate);
+			return gameToUpdate;
+		},
+		[game, setGame]
+	);
+
+	useEffect(() => {
+		if (!connection) return;
+		connection?.on('ReceiveGameMove', onReceiveGameMove);
+	}, [connection, onReceiveGameMove]);
 
 	const makeMove = (row: number, col: number, baseGame?: Game): Game => {
 		// Always operate from a fresh clone (either passed in or current state)
@@ -33,6 +46,12 @@ export const GridContextProvider = ({ children }: { children: ReactNode }) => {
 		// Player move
 		let currentGame = game.Clone();
 		currentGame.GameStarted = true;
+
+		if (inGame) {
+			await sendMove(row, col);
+			return;
+		}
+
 		currentGame = makeMove(row, col, currentGame);
 
 		// AI move after the player
@@ -58,7 +77,7 @@ export const GridContextProvider = ({ children }: { children: ReactNode }) => {
 	}, [game?.IsGameOver]);
 
 	const value = useMemo(() => {
-		return { game, playerSymbol, setPlayerSymbol, setGame, onCellClick };
+		return { game, setGame, onCellClick };
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [game, onCellClick]);
 

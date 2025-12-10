@@ -13,6 +13,7 @@ namespace api.Services {
                 sessionId = Guid.NewGuid().ToString();
 
             GameInfo game = new() { SessionId = sessionId };
+            game.InitGrid();
             _games.Add(sessionId, game);
             return sessionId;
         }

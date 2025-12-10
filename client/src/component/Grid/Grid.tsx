@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 
 // CONTEXT
-import { GridContext } from '@context/GridContext';
+import { AppContext } from 'App';
 
 // COMPONENT
 import Row from './Row';
 
 const Grid = () => {
-	const { game } = useContext(GridContext);
+	const { game } = useContext(AppContext);
 
 	return (
 		<div className="w-100 h-100 p-0 m-0" id="grid">

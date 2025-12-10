@@ -6,6 +6,7 @@ import { CellState } from '@helpers/GameHelper';
 
 // ICONS
 import { RxCross1, RxCircle } from 'react-icons/rx';
+import { AppContext } from 'App';
 
 export interface CellProps {
 	value: CellState;
@@ -14,7 +15,8 @@ export interface CellProps {
 }
 
 const Cell = ({ value, row, col }: CellProps) => {
-	const { onCellClick, game } = useContext(GridContext);
+	const { game } = useContext(AppContext);
+	const { onCellClick } = useContext(GridContext);
 
 	const text = useMemo(() => {
 		switch (value) {

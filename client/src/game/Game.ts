@@ -49,6 +49,7 @@ export class Game {
 	public get ActivePlayer() {
 		return this._activePlayer;
 	}
+
 	public set ActivePlayer(val: CellState) {
 		this._activePlayer = val;
 	}
@@ -147,14 +148,17 @@ export class Game {
 		return this.GetPossibleMoves().length == 0;
 	}
 
-	public MakeMove(coord: Coord) {
+	public MakeMove(coord: Coord, symbol: CellState | null = null) {
 		const row = coord.y;
 		const col = coord.x;
-		if (this._grid[row][col] === CellState.Empty) this._grid[row][col] = this._activePlayer;
+
+		const symToUse = symbol ? symbol : this._activePlayer;
+
+		if (this._grid[row][col] === CellState.Empty) this._grid[row][col] = symToUse;
 
 		if (this.CheckForEnd()) this._isGameOver = true;
 
-		this._activePlayer = getOppositePlayer(this._activePlayer);
+		this._activePlayer = getOppositePlayer(symToUse);
 	}
 
 	public GetPossibleMoves() {

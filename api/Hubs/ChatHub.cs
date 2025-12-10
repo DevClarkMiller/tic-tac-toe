@@ -17,9 +17,10 @@ namespace api.Hubs {
         }
 
         public async Task<bool> JoinSession(string sessionId) {
-            await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
-            Console.WriteLine(sessionId);
-            return _gameService.JoinGame(Context.ConnectionId, sessionId);
+            bool joinedGame = _gameService.JoinGame(Context.ConnectionId, sessionId);
+
+            if (joinedGame) await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
+            return joinedGame;
         }
 
         public async Task LeaveSession(string sessionId) {
@@ -31,7 +32,7 @@ namespace api.Hubs {
             await Clients.Group(sessionId).SendAsync("ReceiveMessage", username, message);
         }
 
-        public async Task SendGameMove(string sessionId, int row, int column) {
+        public async Task SendGameMove(int row, int column, string sessionId) {
             var symbol = _gameService.MakeMove(Context.ConnectionId, sessionId, row, column);
             await Clients.Group(sessionId).SendAsync("ReceiveGameMove", row, column, symbol);
         }
@@ -47,8 +48,7 @@ namespace api.Hubs {
                 _gameService.LeaveGame(connectionId, sessionId);
 
                 // Optionally notify other users in the session
-                await Clients.Group(sessionId)
-                             .SendAsync("PlayerLeft", connectionId);
+                await Clients.Group(sessionId).SendAsync("PlayerLeft", connectionId);
             }
 
             await base.OnDisconnectedAsync(exception);

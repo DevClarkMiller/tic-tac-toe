@@ -5,11 +5,11 @@ import RefreshButton from './RefreshButton';
 import DifficultySelector from './DifficultySelector';
 
 // CONTEXT
-import { GridContext } from '@context/GridContext';
 import { SessionContext } from '@context/SessionContext';
+import { AppContext } from 'App';
 
 const GameTools = () => {
-	const { game, playerSymbol, setGame, setPlayerSymbol } = useContext(GridContext);
+	const { game, playerSymbol, setGame, setPlayerSymbol } = useContext(AppContext);
 	const { inGame } = useContext(SessionContext);
 
 	return (

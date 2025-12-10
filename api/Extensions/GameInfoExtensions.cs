@@ -1,4 +1,5 @@
-﻿using models.Game;
+﻿using models;
+using models.Game;
 
 namespace api.Extensions {
     public static class GameInfoExtensions {
@@ -24,9 +25,11 @@ namespace api.Extensions {
                 : models.Constants.CellState.Cross;
 
         public static void InitGrid(this GameInfo game) {
-            game.Grid ??= [];
+            game.Grid = Enumerable.Range(0, Constants.GRID_ROW_CNT)
+                .Select(_ => Enumerable.Repeat(models.Constants.CellState.Empty, Constants.GRID_COL_CNT).ToList())
+                .ToList();
         }
 
-        public static models.Constants.CellState GameWinner() => models.Constants.CellState.Empty; // Return the empty cell state for now until logic for determining winner is implemented
+        public static models.Constants.CellState GameWinner() => models.Constants.CellState.Empty; // Return the empty cell state for now until logic for determining winnder
     }
 }
