@@ -38,7 +38,7 @@ const PlayerSymSelector = ({
 	return (
 		<div className="w-100 row align-items-center">
 			<h3 className="col-6 me-2 me-md-0">Player</h3>
-			<div className="col-auto">
+			<div className="col-auto" id="player-symbol-selector" data-testid="player-symbol-selector">
 				<Select<Option, false>
 					isDisabled={gameStarted}
 					value={selectedOption}

@@ -6,6 +6,7 @@ import pluginReactHooks from 'eslint-plugin-react-hooks';
 import prettierPlugin from 'eslint-plugin-prettier';
 import prettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
+import jestPlugin from 'eslint-plugin-jest';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
@@ -20,7 +21,7 @@ export default defineConfig([
 			parser: tseslint.parser,
 			ecmaVersion: 'latest',
 			sourceType: 'module',
-			globals: { ...globals.browser, ...globals.node },
+			globals: { ...globals.browser, ...globals.node, ...globals.jest },
 			parserOptions: {
 				ecmaFeatures: { jsx: true },
 				projectService: true,
@@ -32,6 +33,7 @@ export default defineConfig([
 			react: pluginReact,
 			'react-hooks': pluginReactHooks,
 			'@typescript-eslint': tseslint.plugin,
+			jest: jestPlugin,
 		},
 		settings: {
 			react: { version: 'detect' },
