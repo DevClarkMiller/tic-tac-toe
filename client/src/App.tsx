@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getUser, IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
 import { useAuth, type User } from 'helios-identity-sdk';

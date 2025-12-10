@@ -1,19 +1,50 @@
+import { getUsername } from '@helpers/UserHelper';
+import { AppContext } from 'App';
+import type { User } from 'helios-identity-sdk';
+import { useContext, useMemo } from 'react';
 import type { FontControlType } from 'types/FontControlType';
 import type { Message } from 'types/Message';
 
-const UserMessage = ({ fontSizes, message }: { fontSizes: FontControlType; message: Message }) => {
+const MessageHeader = ({
+	isCurrentUser,
+	message,
+	fontSize,
+}: {
+	isCurrentUser: boolean;
+	message: Message;
+	fontSize: number;
+}) => {
 	return (
-		<div
-			className="h5 d-flex flex-column text-start rounded-2 p-1"
-			style={{ width: '90%', border: '1px solid gray', overflowWrap: 'anywhere' }}>
-			<div className="text-secondary h6 p-0 m-0" style={{ fontSize: `${fontSizes.messageHeader}px` }}>
-				<span>{message.dateReceived.toLocaleTimeString()}</span> -{' '}
-				<span className="fw-bold">{message.user}</span>
-			</div>
-			<div>
-				<span className="fw-normal" style={{ fontSize: `${fontSizes.messageContent}px` }}>
-					{message.content}
-				</span>
+		<div className="text-secondary h6 p-0 m-0" style={{ fontSize: `${fontSize}px` }}>
+			{isCurrentUser ? (
+				<>You</>
+			) : (
+				<>
+					<span>{message.dateReceived.toLocaleTimeString()}</span> -
+					<span className="fw-bold">{message.user}</span>
+				</>
+			)}
+		</div>
+	);
+};
+
+const UserMessage = ({ fontSizes, message }: { fontSizes: FontControlType; message: Message }) => {
+	const { user } = useContext(AppContext);
+	const isCurrentUser = useMemo(() => message.user == getUsername(user!), [user, message]);
+
+	const justifyContent = isCurrentUser ? 'justify-content-end pe-1' : 'justify-content-start';
+
+	return (
+		<div className={`d-flex w-100 ${justifyContent}`}>
+			<div
+				className="h5 d-flex flex-column text-start rounded-2 p-1"
+				style={{ width: '80%', border: '1px solid gray', overflowWrap: 'anywhere' }}>
+				<MessageHeader isCurrentUser={isCurrentUser} message={message} fontSize={fontSizes.messageHeader} />
+				<div>
+					<span className="fw-normal" style={{ fontSize: `${fontSizes.messageContent}px` }}>
+						{message.content}
+					</span>
+				</div>
 			</div>
 		</div>
 	);
