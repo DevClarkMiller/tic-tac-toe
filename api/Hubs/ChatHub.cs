@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.SignalR;
 using models;
 
+// TODO: SEPERATE LOGIC INTO DIFFERENT HUBS, THEN MAKE THAT MODULAR ON THE CLIENT
+
 namespace api.Hubs {
     public class ChatHub(IGameService gameService) : Hub {
         private readonly IGameService _gameService = gameService;
 
-        public async Task<string> CreateSession(Constants.CellState playerSymbol) {
+        public async Task<string> CreateSession(models.Constants.CellState playerSymbol) {
             string sessionId = Guid.NewGuid().ToString();
             await JoinSession(sessionId);
             return _gameService.CreateGame(Context.ConnectionId, sessionId, playerSymbol);
@@ -24,6 +26,11 @@ namespace api.Hubs {
 
         public async Task SendMessage(string username, string message, string sessionId) {
             await Clients.Group(sessionId).SendAsync("ReceiveMessage", username, message);
+        }
+
+        public async Task SendGameMove(string sessionId, int row, int column) {
+            var symbol = _gameService.MakeMove(Context.ConnectionId, sessionId, row, column);
+            await Clients.Group(sessionId).SendAsync("ReceiveGameMove", row, column, symbol);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception) {
