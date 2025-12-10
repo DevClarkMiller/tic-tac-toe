@@ -1,14 +1,15 @@
 ﻿using api.Services;
 using Microsoft.AspNetCore.SignalR;
+using models;
 
 namespace api.Hubs {
     public class ChatHub(IGameService gameService) : Hub {
         private readonly IGameService _gameService = gameService;
 
-        public async Task<string> CreateSession() {
+        public async Task<string> CreateSession(Constants.CellState playerSymbol) {
             string sessionId = Guid.NewGuid().ToString();
             await JoinSession(sessionId);
-            return _gameService.CreateGame(Context.ConnectionId, sessionId);
+            return _gameService.CreateGame(Context.ConnectionId, sessionId, playerSymbol);
         }
 
         public async Task<bool> JoinSession(string sessionId) {

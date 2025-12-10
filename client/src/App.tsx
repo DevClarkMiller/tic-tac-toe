@@ -51,8 +51,8 @@ const App = () => {
 
 	return (
 		<AppContext.Provider value={value}>
-			<SessionContextProvider>
-				<GridContextProvider>
+			<GridContextProvider>
+				<SessionContextProvider>
 					<div className="app vh-100 w-100 d-flex align-items-center flex-column p-3 gap-2">
 						{isLoading ? (
 							<div className="d-flex vh-100 align-items-center">
@@ -65,8 +65,8 @@ const App = () => {
 							</>
 						)}
 					</div>
-				</GridContextProvider>
-			</SessionContextProvider>
+				</SessionContextProvider>
+			</GridContextProvider>
 		</AppContext.Provider>
 	);
 };

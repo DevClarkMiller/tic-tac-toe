@@ -5,6 +5,7 @@ import { getSignalRConnection } from 'services/Site';
 import { AppContext } from 'App';
 import type { User } from 'helios-identity-sdk';
 import { getUsername } from '@helpers/UserHelper';
+import { GridContext } from './GridContext';
 
 export interface SessionContextType {
 	isConnected: boolean;
@@ -29,6 +30,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	const { isLoggedIn } = useContext(AppContext);
+	const { playerSymbol } = useContext(GridContext);
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -58,10 +60,10 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	);
 
 	const createSession = useCallback(async () => {
-		const newSessionId = await connection?.invoke('CreateSession');
+		const newSessionId = await connection?.invoke('CreateSession', playerSymbol);
 		setSessionId(newSessionId);
 		setInGame(true);
-	}, [connection]);
+	}, [connection, playerSymbol]);
 
 	const joinSession = useCallback(
 		async (newSessionId: string) => {
