@@ -17,10 +17,8 @@ namespace api.Services {
             var gameExists = _games.TryGetValue(sessionId, out var game);
             if (!gameExists || game is null) return false;
 
-            Console.WriteLine($"{username} is requesting to join {sessionId}");
             if (game.PlayerConnectionIds.Count == 2 || game.PlayerConnectionIds.Contains(username)) return false;
             game.PlayerConnectionIds.Add(username);
-            Console.Write($"{username} successfully joined {sessionId}");
             return true;
         }
 
