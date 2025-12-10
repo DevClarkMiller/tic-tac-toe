@@ -7,7 +7,7 @@ import Chat from './Chat/Chat';
 import { SessionContext } from '@context/SessionContext';
 
 const Home = () => {
-	const { isLoggedIn } = useContext(AppContext);
+	const { isLoggedIn, user } = useContext(AppContext);
 	const { inGame } = useContext(SessionContext);
 
 	const gridMdSize = inGame ? 'col-md-8' : '';
@@ -19,7 +19,7 @@ const Home = () => {
 				className="w-75 d-flex flex-column flex-grow-1 justify-content-between align-items-center gap-2"
 				style={{ maxWidth: '650px' }}>
 				<GameTools />
-				{isLoggedIn && <SessionManager />}
+				{isLoggedIn && user && <SessionManager />}
 			</div>
 			<div className={`row w-75 h-100 ${justifyContent}`}>
 				<div className={`col-12 ${gridMdSize} p-0 m-0 w-max-md-650px`}>
