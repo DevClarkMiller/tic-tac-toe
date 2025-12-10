@@ -1,24 +1,37 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import JoinSessionManagerModal from './JoinSessionManagerModal';
 
-import { FaRegCopy } from 'react-icons/fa';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { SessionContext } from '@context/SessionContext';
 
+import { FaRegCopy, FaQrcode } from 'react-icons/fa';
+import SessionQRModal from './SessionQRModal';
+import { useSearchParams } from 'react-router';
+
 const SessionManager = () => {
-	const [modalOpen, setModalOpen] = useState(false);
+	const [joinSessionModalOpen, setJoinSessionModalOpen] = useState(false);
+	const [sessionQRModalOpen, setSessionQRModalOpen] = useState(false);
 
-	const { leaveSession, joinSession, createSession, sessionId, isConnected } = useContext(SessionContext);
+	const { leaveSession, joinSession, createSession, sessionId, isConnected, inGame } = useContext(SessionContext);
 
-	const toggleModal = () => {
-		setModalOpen(!modalOpen);
-	};
+	const [searchParams, setSearchParams] = useSearchParams();
+	const paramSessionId = searchParams.get('sessionId');
+
+	useEffect(() => {
+		if (!isConnected || !paramSessionId) return;
+
+		joinSession(paramSessionId);
+
+		const newSearchParams = new URLSearchParams(searchParams);
+		newSearchParams.delete('sessionId');
+		setSearchParams(newSearchParams);
+	}, [isConnected, joinSession, paramSessionId, searchParams, setSearchParams]);
 
 	const copyLinkToClipboard = async () => {
 		await navigator.clipboard.writeText(sessionId);
 	};
 
-	if (isConnected) {
+	if (inGame) {
 		return (
 			<div className="d-flex align-items-center gap-2">
 				<OverlayTrigger placement="top" overlay={<Tooltip id="info-tooltip">SessionID: {sessionId}</Tooltip>}>
@@ -26,9 +39,13 @@ const SessionManager = () => {
 						<FaRegCopy onClick={copyLinkToClipboard} className="h4 text-secondary m-0" />
 					</span>
 				</OverlayTrigger>
+				<button onClick={() => setSessionQRModalOpen(!sessionQRModalOpen)} className="btn btn-icon p-0">
+					<FaQrcode />
+				</button>
 				<button onClick={leaveSession} className="btn btn-primary">
 					Disconnect
 				</button>
+				{sessionQRModalOpen && <SessionQRModal sessionId={sessionId} setIsOpen={setSessionQRModalOpen} />}
 			</div>
 		);
 	}
@@ -39,11 +56,13 @@ const SessionManager = () => {
 				Create Game
 			</button>
 
-			<button onClick={toggleModal} className="btn btn-primary">
+			<button onClick={() => setJoinSessionModalOpen(!joinSessionModalOpen)} className="btn btn-primary">
 				Join Game
 			</button>
 
-			{modalOpen && <JoinSessionManagerModal joinSession={joinSession} setIsOpen={setModalOpen} />}
+			{joinSessionModalOpen && (
+				<JoinSessionManagerModal joinSession={joinSession} setIsOpen={setJoinSessionModalOpen} />
+			)}
 		</div>
 	);
 };

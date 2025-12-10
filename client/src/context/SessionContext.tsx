@@ -8,6 +8,7 @@ import { getUsername } from '@helpers/UserHelper';
 
 export interface SessionContextType {
 	isConnected: boolean;
+	inGame: boolean;
 	connection: signalR.HubConnection | null;
 	sessionId: string;
 	messages: Message[];
@@ -21,6 +22,7 @@ export interface SessionContextType {
 export const SessionContext = createContext<SessionContextType>({} as SessionContextType);
 
 export const SessionContextProvider = ({ children }: { children: ReactNode }) => {
+	const [inGame, setInGame] = useState(false);
 	const [isConnected, setIsConnected] = useState(false);
 	const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
 	const [sessionId, setSessionId] = useState('');
@@ -41,6 +43,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 			connection?.on('ReceiveMessage', (user: string, msg: string) => {
 				setMessages(prev => [...prev, { user: user, content: msg, dateReceived: new Date() }]);
 			});
+			setIsConnected(true);
 		} catch (err: unknown) {
 			console.error(err);
 		}
@@ -57,23 +60,23 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const createSession = useCallback(async () => {
 		const newSessionId = await connection?.invoke('CreateSession');
 		setSessionId(newSessionId);
-		setIsConnected(true);
+		setInGame(true);
 	}, [connection]);
 
 	const joinSession = useCallback(
 		async (newSessionId: string) => {
 			await connection?.invoke('JoinSession', newSessionId);
 			setSessionId(newSessionId);
-			setIsConnected(true);
+			setInGame(true);
 		},
 		[connection]
 	);
 
 	const leaveSession = useCallback(async () => {
 		await connection?.invoke('LeaveSession', sessionId);
-		setIsConnected(false);
 		setSessionId('');
 		setMessages([]);
+		setInGame(false);
 	}, [connection, sessionId]);
 
 	useEffect(() => {
@@ -81,8 +84,18 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	}, [connection, startConnection]);
 
 	const value = useMemo(() => {
-		return { sessionId, isConnected, connection, messages, createSession, joinSession, leaveSession, sendMessage };
-	}, [connection, createSession, isConnected, joinSession, leaveSession, messages, sendMessage, sessionId]);
+		return {
+			inGame,
+			sessionId,
+			isConnected,
+			connection,
+			messages,
+			createSession,
+			joinSession,
+			leaveSession,
+			sendMessage,
+		};
+	}, [connection, createSession, inGame, isConnected, joinSession, leaveSession, messages, sendMessage, sessionId]);
 
 	return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };

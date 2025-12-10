@@ -28,6 +28,12 @@
 	font-size: 30px;
 }
 
+.btn-icon {
+	display: flex;
+	align-items: center;
+	font-size: 25px;
+}
+
 @keyframes logo-spin {
 	from {
 		transform: rotate(0deg);

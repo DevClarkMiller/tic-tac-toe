@@ -8,10 +8,10 @@ import { SessionContext } from '@context/SessionContext';
 
 const Home = () => {
 	const { isLoggedIn } = useContext(AppContext);
-	const { isConnected } = useContext(SessionContext);
+	const { inGame } = useContext(SessionContext);
 
-	const gridMdSize = isConnected ? 'col-md-8' : '';
-	const justifyContent = isConnected ? 'justify-content-between' : 'justify-content-center';
+	const gridMdSize = inGame ? 'col-md-8' : '';
+	const justifyContent = inGame ? 'justify-content-between' : 'justify-content-center';
 
 	return (
 		<div className="h-100 w-100 d-flex flex-column flex-grow-1 justify-content-between align-items-center gap-2">
@@ -25,7 +25,7 @@ const Home = () => {
 				<div className={`col-12 ${gridMdSize} p-0 m-0 w-max-md-650px`}>
 					<Grid />
 				</div>
-				{isConnected && (
+				{inGame && (
 					<div className="col-12 col-md-4 p-0 m-0">
 						<Chat />
 					</div>
