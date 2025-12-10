@@ -10,7 +10,6 @@ export const createSession = async (): Promise<FetcherData> => {
 };
 
 export const getSignalRConnection = () => {
-	console.log(API_URL);
 	return new signalR.HubConnectionBuilder()
 		.withUrl(`${API_URL}/socket/chathub`, { withCredentials: true })
 		.withAutomaticReconnect()
