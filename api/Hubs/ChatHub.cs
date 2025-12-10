@@ -11,12 +11,14 @@ namespace api.Hubs {
 
         public async Task<string> CreateSession(models.Constants.CellState playerSymbol) {
             string sessionId = Guid.NewGuid().ToString();
+            sessionId = _gameService.CreateGame(Context.ConnectionId, sessionId, playerSymbol);
             await JoinSession(sessionId);
-            return _gameService.CreateGame(Context.ConnectionId, sessionId, playerSymbol);
+            return sessionId;
         }
 
         public async Task<bool> JoinSession(string sessionId) {
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
+            Console.WriteLine(sessionId);
             return _gameService.JoinGame(Context.ConnectionId, sessionId);
         }
 

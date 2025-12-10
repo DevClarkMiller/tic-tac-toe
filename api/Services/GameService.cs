@@ -14,7 +14,6 @@ namespace api.Services {
 
             GameInfo game = new() { SessionId = sessionId };
             _games.Add(sessionId, game);
-            game.AddPlayer(username, playerSymbol);
             return sessionId;
         }
 
@@ -57,12 +56,8 @@ namespace api.Services {
         }
 
         public PlayerInfo? GetPlayerInfo(string username, string sessionId) {
-            Console.WriteLine($"Fetching player info for {username}");
-
             var gameExists = _games.TryGetValue(sessionId, out var game);
             if (!gameExists || game is null || !game.Players.ContainsKey(username)) return null;
-
-            Console.WriteLine("Game exists");
 
             return game.GetPlayer(username);
         }

@@ -60,9 +60,13 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 		[connection, sessionId]
 	);
 
-	const getPlayerInfo = useCallback(async () => {
-		return (await connection?.invoke('GetPlayerInfo', sessionId)!) as PlayerInfo | null;
-	}, [connection, sessionId]);
+	const getPlayerInfo = useCallback(
+		async (sessId: string) => {
+			console.log(sessId);
+			return (await connection?.invoke('GetPlayerInfo', sessId)!) as PlayerInfo | null;
+		},
+		[connection]
+	);
 
 	const createSession = useCallback(async () => {
 		const newSessionId = await connection?.invoke('CreateSession', playerSymbol);
@@ -79,11 +83,11 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 			setInGame(true);
 			game.GameStarted = true;
 
-			const playerInfo = await getPlayerInfo();
+			const playerInfo = await getPlayerInfo(newSessionId);
 			console.log(playerInfo);
 			if (playerInfo) setPlayerSymbol(playerInfo.symbol);
 		},
-		[connection, game, getPlayerInfo, setPlayerSymbol]
+		[connection, game, getPlayerInfo, setPlayerSymbol, setSessionId]
 	);
 
 	const leaveSession = useCallback(async () => {
