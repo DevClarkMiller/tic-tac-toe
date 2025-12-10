@@ -33,11 +33,15 @@ namespace api.Services {
             if (game.PlayerConnectionIds.Count == 0)
                 _games.Remove(sessionId);
         }
+
+        public List<string> GetSessionsForUsername(string username) =>
+            _games.Where(g => g.Value.PlayerConnectionIds.Contains(username)).Select(g => g.Key).ToList();
     }
 
     public interface IGameService {
         string CreateGame(string username, string sessionId);
         bool JoinGame(string username, string sessionId);
         void LeaveGame(string username, string sessionId);
+        List<string> GetSessionsForUsername(string username);
     }
 }

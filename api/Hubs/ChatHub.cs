@@ -24,5 +24,21 @@ namespace api.Hubs {
         public async Task SendMessage(string username, string message, string sessionId) {
             await Clients.Group(sessionId).SendAsync("ReceiveMessage", username, message);
         }
+
+        public override async Task OnDisconnectedAsync(Exception? exception) {
+            // Use Context.ConnectionId to identify the user
+            string connectionId = Context.ConnectionId;
+
+            // Example: Remove user from any games they were in
+            foreach (var sessionId in _gameService.GetSessionsForUsername(connectionId)) {
+                _gameService.LeaveGame(connectionId, sessionId);
+
+                // Optionally notify other users in the session
+                await Clients.Group(sessionId)
+                             .SendAsync("PlayerLeft", connectionId);
+            }
+
+            await base.OnDisconnectedAsync(exception);
+        }
     }
 }
