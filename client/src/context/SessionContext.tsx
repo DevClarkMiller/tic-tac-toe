@@ -48,7 +48,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const sendMessage = useCallback(
 		async (msg: string, user: User) => {
 			console.log(user);
-			console.log(user.logins?.length > 0 ? user.logins[0].email);
+			console.log(user.logins?.length > 0 ? user.logins[0].email : user.id);
 			const userName = user.logins?.length > 0 ? user.logins[0].email : user.id;
 			console.log(userName);
 
