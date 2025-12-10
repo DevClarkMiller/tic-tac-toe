@@ -62,6 +62,8 @@ namespace api.Services {
             var gameExists = _games.TryGetValue(sessionId, out var game);
             if (!gameExists || game is null || !game.Players.ContainsKey(username)) return null;
 
+            Console.WriteLine("Game exists");
+
             return game.GetPlayer(username);
         }
     }
