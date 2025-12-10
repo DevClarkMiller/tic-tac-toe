@@ -6,9 +6,11 @@ import DifficultySelector from './DifficultySelector';
 
 // CONTEXT
 import { GridContext } from '@context/GridContext';
+import { SessionContext } from '@context/SessionContext';
 
 const GameTools = () => {
 	const { game, playerSymbol, setGame, setPlayerSymbol } = useContext(GridContext);
+	const { inGame } = useContext(SessionContext);
 
 	const gameStarted = useMemo(() => game.GameStarted, [game]);
 
@@ -24,9 +26,11 @@ const GameTools = () => {
 					setPlayerSymbol={setPlayerSymbol}
 				/>
 			</div>
-			<div className="col-12 col-md-6">
-				<DifficultySelector game={game} setGame={setGame} />
-			</div>
+			{!inGame && (
+				<div className="col-12 col-md-6">
+					<DifficultySelector game={game} setGame={setGame} />
+				</div>
+			)}
 		</div>
 	);
 };

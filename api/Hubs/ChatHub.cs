@@ -1,6 +1,7 @@
 ﻿using api.Services;
 using Microsoft.AspNetCore.SignalR;
 using models;
+using models.Game;
 
 // TODO: SEPERATE LOGIC INTO DIFFERENT HUBS, THEN MAKE THAT MODULAR ON THE CLIENT
 
@@ -32,6 +33,8 @@ namespace api.Hubs {
             var symbol = _gameService.MakeMove(Context.ConnectionId, sessionId, row, column);
             await Clients.Group(sessionId).SendAsync("ReceiveGameMove", row, column, symbol);
         }
+
+        public PlayerInfo? GetPlayerInfo(string sessionId) => _gameService.GetPlayerInfo(Context.ConnectionId, sessionId);
 
         public override async Task OnDisconnectedAsync(Exception? exception) {
             // Use Context.ConnectionId to identify the user

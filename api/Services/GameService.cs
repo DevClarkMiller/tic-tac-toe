@@ -55,6 +55,13 @@ namespace api.Services {
 
             return player!.Symbol;
         }
+
+        public PlayerInfo? GetPlayerInfo(string username, string sessionId) {
+            var gameExists = _games.TryGetValue(sessionId, out var game);
+            if (!gameExists || game is null || !game.Players.ContainsKey(username)) return null;
+
+            return game.GetPlayer(username);
+        }
     }
 
     public interface IGameService {
@@ -63,5 +70,6 @@ namespace api.Services {
         void LeaveGame(string username, string sessionId);
         List<string> GetSessionsForUsername(string username);
         models.Constants.CellState MakeMove(string username, string sessionId, int row, int col);
+        PlayerInfo? GetPlayerInfo(string username, string sessionId);
     }
 }
