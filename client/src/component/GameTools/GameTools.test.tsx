@@ -29,6 +29,8 @@ describe('GameTools test suite', () => {
 		});
 	});
 
+	// TODO: FINISH TEST
+
 	test.each([
 		['cross', CellState.Circle],
 		['circle', CellState.Cross],

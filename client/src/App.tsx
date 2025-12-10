@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getUser, IDENTITY_API_URL, IDENTITY_URL } from 'services/Identity';
 import { useAuth, type User } from 'helios-identity-sdk';
@@ -7,16 +7,13 @@ import { useAuth, type User } from 'helios-identity-sdk';
 import './App.css';
 
 // COMPONENT
-import Grid from './component/Grid/Grid';
 import { BallTriangle } from 'react-loading-icons';
 
 // CONTEXT
 import { GridContextProvider } from './context/GridContext';
-import GameTools from './component/GameTools/GameTools';
-import Chat from '@components/Chat/Chat';
 import Header from '@components/Header/Header';
 import SessionContextProvider from '@context/SessionContext';
-import SessionManager from '@components/SessionManager/SessionManager';
+import Home from '@components/Home';
 
 export interface AppContextType {
 	isLoggedIn: boolean;
@@ -37,7 +34,8 @@ const App = () => {
 	const logout = useCallback(() => {
 		localStorage.removeItem('token');
 		setIsLoggedIn(false);
-	}, [setIsLoggedIn]);
+		setUser(null);
+	}, [setIsLoggedIn, setUser]);
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -62,15 +60,8 @@ const App = () => {
 							</div>
 						) : (
 							<>
-								<Header />
-								<div
-									className="h-100 w-75 d-flex flex-column flex-grow-1 justify-content-between align-items-center gap-2"
-									style={{ maxWidth: '650px' }}>
-									<GameTools />
-									{isLoggedIn && <SessionManager />}
-									<Grid />
-									<Chat />
-								</div>
+								<Header user={user} />
+								<Home />
 							</>
 						)}
 					</div>

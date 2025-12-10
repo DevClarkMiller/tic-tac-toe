@@ -19,6 +19,15 @@
 	width: 85px;
 }
 
+.chat-container {
+	max-height: 200px;
+	transition: all 250ms ease-in-out;
+}
+
+.chat-font-size-control {
+	font-size: 30px;
+}
+
 @keyframes logo-spin {
 	from {
 		transform: rotate(0deg);
@@ -41,6 +50,23 @@
 
 	.w-md-100 {
 		width: 100% !important;
+	}
+
+	.h-md-100 {
+		width: 100% !important;
+	}
+
+	.h-max-md-100 {
+		max-width: 100% !important;
+	}
+
+	.w-max-md-650px {
+		max-width: 650px;
+	}
+
+	.chat-container {
+		height: 400px;
+		max-height: 400px;
 	}
 }
 

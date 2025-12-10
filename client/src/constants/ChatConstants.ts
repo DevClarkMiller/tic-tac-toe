@@ -1,0 +1,3 @@
+export const MESSAGE_FONT_HEADER_DEFAULT = 16;
+export const MESSAGE_FONT_CONTENT_DEFAULT = 20;
+export const FONT_SIZE_CHANGE_MAX_DIFF = 4;

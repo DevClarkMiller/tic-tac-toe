@@ -4,6 +4,7 @@ import type { Message } from 'types/Message';
 import { getSignalRConnection } from 'services/Site';
 import { AppContext } from 'App';
 import type { User } from 'helios-identity-sdk';
+import { getUsername } from '@helpers/UserHelper';
 
 export interface SessionContextType {
 	isConnected: boolean;
@@ -38,7 +39,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 		try {
 			await connection?.start();
 			connection?.on('ReceiveMessage', (user: string, msg: string) => {
-				setMessages(prev => [...prev, { user: user, content: msg, dataReceived: new Date() }]);
+				setMessages(prev => [...prev, { user: user, content: msg, dateReceived: new Date() }]);
 			});
 		} catch (err: unknown) {
 			console.error(err);
@@ -47,11 +48,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 
 	const sendMessage = useCallback(
 		async (msg: string, user: User) => {
-			console.log(user);
-			console.log(user.logins?.length > 0 ? user.logins[0].email : user.id);
-			const userName = user.logins?.length > 0 ? user.logins[0].email : user.id;
-			console.log(userName);
-
+			const userName = getUsername(user);
 			await connection?.invoke('SendMessage', userName, msg, sessionId);
 		},
 		[connection, sessionId]
@@ -76,6 +73,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 		await connection?.invoke('LeaveSession', sessionId);
 		setIsConnected(false);
 		setSessionId('');
+		setMessages([]);
 	}, [connection, sessionId]);
 
 	useEffect(() => {

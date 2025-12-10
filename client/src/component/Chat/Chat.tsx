@@ -2,63 +2,31 @@ import { useContext, useState } from 'react';
 import type { Message } from 'types/Message';
 import { SessionContext } from '@context/SessionContext';
 import { AppContext } from 'App';
-import type { User } from 'helios-identity-sdk';
-
-const UserMessage = ({ message }: { message: Message }) => {
-	return (
-		<div className="h5 d-flex flex-column text-start w-100">
-			<div className="text-secondary h6 p-0 m-0">{message.dataReceived.toLocaleTimeString()}</div>
-			<div>
-				<span className="fw-bold">{message.user}</span>
-				<span className="fw-normal">: {message.content}</span>
-			</div>
-		</div>
-	);
-};
-
-const MessageInput = ({ user, sendMessage }: { user: User; sendMessage: (_msg: string, _user: User) => void }) => {
-	const [text, setText] = useState<string>('');
-
-	const onSend = (e: any) => {
-		if (e.preventDefault) e.preventDefault();
-		if (text) sendMessage(text, user);
-		setText('');
-	};
-
-	return (
-		<form onSubmit={onSend}>
-			<div className="input-group input-group-sm mb-3">
-				<button className="btn btn-outline-secondary" type="submit">
-					Send
-				</button>
-				<input
-					type="text"
-					className="form-control"
-					aria-label="Small"
-					aria-describedby="inputGroup-sizing-sm"
-					value={text}
-					placeholder="Enter your message..."
-					onChange={e => {
-						setText(e.target.value);
-					}}
-				/>
-			</div>
-		</form>
-	);
-};
+import type { FontControlType } from 'types/FontControlType';
+import { MESSAGE_FONT_CONTENT_DEFAULT, MESSAGE_FONT_HEADER_DEFAULT } from 'constants/ChatConstants';
+import ChatHeader from './ChatHeader/ChatHeader';
+import MessageInput from './MessageInput';
+import UserMessage from './UserMessage';
 
 const Chat = () => {
-	const { isConnected, messages, sendMessage } = useContext(SessionContext);
+	const { messages, sendMessage } = useContext(SessionContext);
 	const { user } = useContext(AppContext);
 
-	if (!isConnected) return null;
+	const [fontSizes, setFontSizes] = useState<FontControlType>({
+		messageHeader: MESSAGE_FONT_HEADER_DEFAULT,
+		messageContent: MESSAGE_FONT_CONTENT_DEFAULT,
+	});
 
 	return (
-		<div className="w-100">
-			<h2>Chat</h2>
-			<div className="overflow-scroll" data-bs-spy="scroll" style={{ maxHeight: '200px' }}>
+		<div className="w-100 rounded-2 p-1 pe-0" style={{ border: '1px solid gray' }}>
+			<ChatHeader fontSizes={fontSizes} setFontSizes={setFontSizes} />
+			<div className="overflow-y-scroll chat-container" data-bs-spy="scroll">
 				{messages.map((message: Message) => (
-					<UserMessage key={message.user + '-' + message.dataReceived} message={message} />
+					<UserMessage
+						fontSizes={fontSizes}
+						key={message.user + '-' + message + '-' + message.dateReceived}
+						message={message}
+					/>
 				))}
 			</div>
 			<MessageInput user={user!} sendMessage={sendMessage} />
