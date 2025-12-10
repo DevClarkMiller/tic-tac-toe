@@ -1,5 +1,6 @@
 ﻿
 using api.Hubs;
+using api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -53,6 +54,8 @@ namespace api
 					   ValidateAudience = false
 				   };
 			   });
+
+			builder.Services.AddSingleton<IGameService, GameService>();
 
 			var app = builder.Build();
 

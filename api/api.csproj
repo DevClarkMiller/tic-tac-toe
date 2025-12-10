@@ -19,4 +19,8 @@
     <Folder Include="Mapper\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\models\models.csproj" />
+  </ItemGroup>
+
 </Project>

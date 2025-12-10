@@ -65,7 +65,8 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 
 	const joinSession = useCallback(
 		async (newSessionId: string) => {
-			await connection?.invoke('JoinSession', newSessionId);
+			const joinedSession = await connection?.invoke('JoinSession', newSessionId);
+			if (!joinedSession) return;
 			setSessionId(newSessionId);
 			setInGame(true);
 		},
