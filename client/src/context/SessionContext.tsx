@@ -75,6 +75,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	);
 
 	const createSession = useCallback(async () => {
+		console.log(`PLAYER SYMBOL ${playerSymbol}`);
 		const newSessionId = await connection?.invoke('CreateSession', playerSymbol);
 		setSessionId(newSessionId);
 		setInGame(true);
