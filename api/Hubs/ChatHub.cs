@@ -31,7 +31,7 @@ namespace api.Hubs {
 
         public async Task LeaveSession(string sessionId) {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, sessionId);
-            _gameService.JoinGame(Context.ConnectionId, sessionId);
+            _gameService.LeaveGame(Context.ConnectionId, sessionId);
         }
 
         public async Task SendMessage(string username, string message, string sessionId) {
