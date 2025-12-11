@@ -14,6 +14,7 @@ export class Game {
 	private _activePlayer: CellState = CellState.Cross;
 	private _gameStarted: boolean = false;
 	private _difficulty: number = Difficulty.Hard;
+	private _winner: CellState | null = null;
 
 	private _scores: Map<CellState, number> = new Map<CellState, number>();
 
@@ -66,6 +67,14 @@ export class Game {
 	}
 	public set Difficulty(val: number) {
 		this._difficulty = val;
+	}
+
+	public get Winner(): CellState | null {
+		return this._winner;
+	}
+
+	public set Winner(val: CellState) {
+		this._winner = val;
 	}
 
 	private InitScore(player: CellState) {

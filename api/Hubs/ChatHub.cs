@@ -1,7 +1,8 @@
 ﻿using api.Services;
 using Microsoft.AspNetCore.SignalR;
-using models;
 using models.Game;
+using System.Runtime.CompilerServices;
+using CellState = models.Constants.CellState;
 
 // TODO: SEPERATE LOGIC INTO DIFFERENT HUBS, THEN MAKE THAT MODULAR ON THE CLIENT
 
@@ -9,7 +10,7 @@ namespace api.Hubs {
     public class ChatHub(IGameService gameService) : Hub {
         private readonly IGameService _gameService = gameService;
 
-        public async Task<string> CreateSession(models.Constants.CellState playerSymbol) {
+        public async Task<string> CreateSession(CellState playerSymbol) {
             try {
                 string sessionId = Guid.NewGuid().ToString();
                 sessionId = _gameService.CreateGame(Context.ConnectionId, sessionId, playerSymbol);
@@ -40,9 +41,22 @@ namespace api.Hubs {
         public async Task SendGameMove(int row, int column, string sessionId) {
             var symbol = _gameService.MakeMove(Context.ConnectionId, sessionId, row, column);
             await Clients.Group(sessionId).SendAsync("ReceiveGameMove", row, column, symbol);
+
+            if (_gameService.IsGameOver(sessionId)) {
+                var winner = _gameService.GetGameWinner(sessionId);
+                await Clients.Group(sessionId).SendAsync("GameOver", winner);
+            }
         }
 
         public PlayerInfo? GetPlayerInfo(string sessionId) => _gameService.GetPlayerInfo(Context.ConnectionId, sessionId);
+
+        public CellState GetActivePlayer(string sessionId) => _gameService.GetActivePlayer(sessionId);
+
+        public async Task RestartGame(string sessionId){
+            Console.WriteLine("NOW GOING TO RESTART THE GAME");
+            _gameService.RestartGame(sessionId);
+            await Clients.Group(sessionId).SendAsync("RestartGame", Context.ConnectionId);
+        }
 
         public override async Task OnDisconnectedAsync(Exception? exception) {
             // Use Context.ConnectionId to identify the user

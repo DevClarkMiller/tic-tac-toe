@@ -15,7 +15,7 @@ const GameTools = () => {
 	return (
 		<div className="row w-100 mb-2 g-2 justify-content-center">
 			<div className="col-12 col-md-2 d-flex justify-content-md-center">
-				<RefreshButton playerSymbol={playerSymbol} game={game} setGame={setGame} />
+				<RefreshButton />
 			</div>
 			<div className="col-12 col-md-4">
 				<PlayerSymSelector

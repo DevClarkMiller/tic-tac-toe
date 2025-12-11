@@ -31,8 +31,7 @@ namespace api.Extensions {
                 .ToList();
         }
 
-        public static models.Constants.CellState GameWinner() => models.Constants.CellState.Empty; // Return the empty cell state for now until logic for determining winner
-
+        public static bool HasStarted(this GameInfo game) => game.PlayerCount() == 2;
 
         public static int NumAlignedCells(this GameInfo game, int r, int c, int cMod, int rMod, models.Constants.CellState cell) {
             int matchCnt = 0;
@@ -119,6 +118,10 @@ namespace api.Extensions {
             }
 
             return CellState.Empty;
+        }
+
+        public static void SwapActivePlayer(this GameInfo game) {
+            game.ActivePlayer = game.ActivePlayer == CellState.Cross ? CellState.Circle : CellState.Cross;
         }
     }
 }

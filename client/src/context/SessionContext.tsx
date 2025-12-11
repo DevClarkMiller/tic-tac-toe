@@ -6,6 +6,8 @@ import { AppContext } from 'App';
 import type { User } from 'helios-identity-sdk';
 import { getUsername } from '@helpers/UserHelper';
 import type { PlayerInfo } from '@models/PlayerInfo';
+import { Game } from '@game/Game';
+import type { CellState } from '@game/CellState';
 
 export interface SessionContextType {
 	isConnected: boolean;
@@ -19,6 +21,7 @@ export interface SessionContextType {
 	joinSession: (_sessionId: string) => Promise<void>;
 	leaveSession: () => Promise<void>;
 	sendMove: (row: number, column: number) => Promise<void>;
+	restartGameRemote: () => Promise<void>;
 }
 
 export const SessionContext = createContext<SessionContextType>({} as SessionContextType);
@@ -31,7 +34,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	const { isLoggedIn, playerSymbol, setPlayerSymbol } = useContext(AppContext);
-	const { game } = useContext(AppContext);
+	const { setGame } = useContext(AppContext);
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -46,11 +49,19 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 			connection?.on('ReceiveMessage', (user: string, msg: string) => {
 				setMessages(prev => [...prev, { user: user, content: msg, dateReceived: new Date() }]);
 			});
+			connection?.on('GameOver', (winner: CellState) => {
+				setGame(prevGame => {
+					const newGame = prevGame.Clone();
+					newGame.IsGameOver = true;
+					newGame.Winner = winner;
+					return newGame;
+				});
+			});
 			setIsConnected(true);
 		} catch (err: unknown) {
 			console.error(err);
 		}
-	}, [connection]);
+	}, [connection, setGame]);
 
 	const sendMessage = useCallback(
 		async (msg: string, user: User) => {
@@ -75,12 +86,30 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 	);
 
 	const createSession = useCallback(async () => {
-		console.log(`PLAYER SYMBOL ${playerSymbol}`);
 		const newSessionId = await connection?.invoke('CreateSession', playerSymbol);
 		setSessionId(newSessionId);
 		setInGame(true);
-		game.GameStarted = true;
-	}, [connection, game, playerSymbol]);
+		setGame(prevGame => {
+			const newGame = new Game(prevGame.Rows, prevGame.Cols);
+			newGame.ActivePlayer = playerSymbol;
+			newGame.GameStarted = true;
+			return newGame;
+		});
+	}, [connection, playerSymbol, setGame]);
+
+	const getActivePlayer = useCallback(async () => {
+		return await connection?.invoke('GetActivePlayer', sessionId);
+	}, [connection, sessionId]);
+
+	const restartGameRemote = useCallback(async () => {
+		await connection?.invoke('RestartGame', sessionId);
+		const activePlayer = await getActivePlayer();
+		setGame(prevGame => {
+			const updatedGame = prevGame.Clone();
+			updatedGame.ActivePlayer = activePlayer;
+			return updatedGame;
+		});
+	}, [connection, getActivePlayer, sessionId, setGame]);
 
 	const joinSession = useCallback(
 		async (newSessionId: string) => {
@@ -88,13 +117,20 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 			if (!joinedSession) return;
 			setSessionId(newSessionId);
 			setInGame(true);
-			game.GameStarted = true;
+
+			const activePlayer = await getActivePlayer();
+
+			setGame(prevGame => {
+				const gameToUpdate = prevGame.Clone();
+				gameToUpdate.GameStarted = true;
+				gameToUpdate.ActivePlayer = activePlayer;
+				return gameToUpdate;
+			});
 
 			const playerInfo = await getPlayerInfo(newSessionId);
-			console.log(playerInfo);
 			if (playerInfo) setPlayerSymbol(playerInfo.symbol);
 		},
-		[connection, game, getPlayerInfo, setPlayerSymbol, setSessionId]
+		[connection, getPlayerInfo, getActivePlayer, setGame, setPlayerSymbol]
 	);
 
 	const leaveSession = useCallback(async () => {
@@ -120,18 +156,20 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 			leaveSession,
 			sendMessage,
 			sendMove,
+			restartGameRemote,
 		};
 	}, [
 		connection,
-		createSession,
 		inGame,
 		isConnected,
+		sessionId,
+		messages,
 		joinSession,
 		leaveSession,
-		messages,
+		createSession,
 		sendMessage,
 		sendMove,
-		sessionId,
+		restartGameRemote,
 	]);
 
 	return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

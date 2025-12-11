@@ -15,6 +15,7 @@ namespace api.Services {
 
             GameInfo game = new() { SessionId = sessionId };
             game.InitGrid();
+            game.ActivePlayer = playerSymbol;
             _games.Add(sessionId, game);
             return sessionId;
         }
@@ -46,14 +47,21 @@ namespace api.Services {
 
         public CellState MakeMove(string username, string sessionId, int row, int col) {
             var gameExists = _games.TryGetValue(sessionId, out var game);
-            if (!gameExists || game is null || !game.Players.ContainsKey(username)) return DEFAULT_CELL_STATE;
+            if (
+                !gameExists ||
+                game is null ||
+                !game.Players.ContainsKey(username) ||
+                !game.HasStarted()
+                ) return DEFAULT_CELL_STATE;
 
-            var player = game.GetPlayer(username);
+            var player = game.GetPlayer(username)!;
+            if (player.Symbol != game.ActivePlayer) return DEFAULT_CELL_STATE;
 
             if (game.Grid[row][col] != CellState.Empty) return DEFAULT_CELL_STATE;
 
             game.Grid[row][col] = player!.Symbol;
 
+            game.SwapActivePlayer();
             return player!.Symbol;
         }
 
@@ -62,6 +70,35 @@ namespace api.Services {
             if (!gameExists || game is null || !game.Players.ContainsKey(username)) return null;
 
             return game.GetPlayer(username);
+        }
+
+        public CellState GetActivePlayer(string sessionId) {
+            var gameExists = _games.TryGetValue(sessionId, out var game);
+            if (!gameExists || game is null) return CellState.Empty;
+
+            return game.ActivePlayer;
+        }
+
+        public bool IsGameOver(string sessionId) {
+            var gameExists = _games.TryGetValue(sessionId, out var game);
+            if (!gameExists || game is null) return true;
+
+            return game.CheckForEnd();
+        }
+
+        public CellState GetGameWinner(string sessionId) {
+            var gameExists = _games.TryGetValue(sessionId, out var game);
+            if (!gameExists || game is null) return CellState.Empty;
+
+            return game.CalculateWinner(game.ActivePlayer);
+        }
+
+        public void RestartGame(string sessionId) {
+            var gameExists = _games.TryGetValue(sessionId, out var game);
+            if (!gameExists || game is null) return;
+
+            game.InitGrid();
+            game.ActivePlayer = game.Players.First().Value.Symbol;
         }
     }
 
@@ -72,5 +109,9 @@ namespace api.Services {
         List<string> GetSessionsForUsername(string username);
         CellState MakeMove(string username, string sessionId, int row, int col);
         PlayerInfo? GetPlayerInfo(string username, string sessionId);
+        CellState GetActivePlayer(string sessionId);
+        bool IsGameOver(string sessionId);
+        CellState GetGameWinner(string sessionId);
+        void RestartGame(string sessionId);
     }
 }
