@@ -94,6 +94,12 @@ export class Game {
 		return grid.map(row => [...row]);
 	}
 
+	public GetResetGame(playerSymbol: CellState): Game {
+		const newGame = new Game(this._rows, this._cols);
+		newGame.ActivePlayer = playerSymbol;
+		return newGame;
+	}
+
 	private NumAlignedCells = (x: number, y: number, xMod: number, yMod: number, cell: CellState) => {
 		const ROWS = 3;
 		const COLS = 3;

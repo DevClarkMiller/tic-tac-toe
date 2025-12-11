@@ -20,12 +20,10 @@ export const GridContextProvider = ({ children }: { children: ReactNode }) => {
 	const { restartGameRemote, connection, inGame, sendMove } = useContext(SessionContext);
 
 	const restartGame = useCallback(async () => {
-		const newGame = new Game(game.Rows, game.Cols);
-		newGame.ActivePlayer = playerSymbol;
-		setGame(newGame);
+		setGame(prevGame => prevGame.GetResetGame(playerSymbol));
 
 		if (inGame) restartGameRemote();
-	}, [game.Cols, game.Rows, inGame, playerSymbol, restartGameRemote, setGame]);
+	}, [inGame, playerSymbol, restartGameRemote, setGame]);
 
 	useEffect(() => {
 		if (!connection) return;

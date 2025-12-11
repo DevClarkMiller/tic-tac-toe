@@ -107,6 +107,7 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 		setGame(prevGame => {
 			const updatedGame = prevGame.Clone();
 			updatedGame.ActivePlayer = activePlayer;
+			updatedGame.GameStarted = true;
 			return updatedGame;
 		});
 	}, [connection, getActivePlayer, sessionId, setGame]);
@@ -135,10 +136,11 @@ export const SessionContextProvider = ({ children }: { children: ReactNode }) =>
 
 	const leaveSession = useCallback(async () => {
 		await connection?.invoke('LeaveSession', sessionId);
+		setGame(prevGame => prevGame.GetResetGame(playerSymbol));
 		setSessionId('');
 		setMessages([]);
 		setInGame(false);
-	}, [connection, sessionId]);
+	}, [connection, playerSymbol, sessionId, setGame]);
 
 	useEffect(() => {
 		if (connection) startConnection();
