@@ -10,10 +10,15 @@ namespace api.Hubs {
         private readonly IGameService _gameService = gameService;
 
         public async Task<string> CreateSession(models.Constants.CellState playerSymbol) {
-            string sessionId = Guid.NewGuid().ToString();
-            sessionId = _gameService.CreateGame(Context.ConnectionId, sessionId, playerSymbol);
-            await JoinSession(sessionId);
-            return sessionId;
+            try {
+                string sessionId = Guid.NewGuid().ToString();
+                sessionId = _gameService.CreateGame(Context.ConnectionId, sessionId, playerSymbol);
+                await JoinSession(sessionId);
+                return sessionId;
+            } catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         public async Task<bool> JoinSession(string sessionId) {

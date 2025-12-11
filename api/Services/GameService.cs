@@ -1,14 +1,15 @@
 ﻿using api.Extensions;
-using models;
 using models.Game;
+
+using CellState = models.Constants.CellState;
 
 namespace api.Services {
     public class GameService : IGameService {
         private Dictionary<string, GameInfo> _games = new();
 
-        private static models.Constants.CellState DEFAULT_CELL_STATE = models.Constants.CellState.Empty;
+        private static CellState DEFAULT_CELL_STATE = CellState.Empty;
 
-        public string CreateGame(string username, string sessionId, models.Constants.CellState playerSymbol) {
+        public string CreateGame(string username, string sessionId, CellState playerSymbol) {
             while (_games.ContainsKey(sessionId))
                 sessionId = Guid.NewGuid().ToString();
 
@@ -43,13 +44,13 @@ namespace api.Services {
         public List<string> GetSessionsForUsername(string username) =>
             _games.Where(g => g.Value.Players.ContainsKey(username)).Select(g => g.Key).ToList();
 
-        public models.Constants.CellState MakeMove(string username, string sessionId, int row, int col) {
+        public CellState MakeMove(string username, string sessionId, int row, int col) {
             var gameExists = _games.TryGetValue(sessionId, out var game);
             if (!gameExists || game is null || !game.Players.ContainsKey(username)) return DEFAULT_CELL_STATE;
 
             var player = game.GetPlayer(username);
 
-            if (game.Grid[row][col] != models.Constants.CellState.Empty) return DEFAULT_CELL_STATE;
+            if (game.Grid[row][col] != CellState.Empty) return DEFAULT_CELL_STATE;
 
             game.Grid[row][col] = player!.Symbol;
 
@@ -65,11 +66,11 @@ namespace api.Services {
     }
 
     public interface IGameService {
-        string CreateGame(string username, string sessionId, models.Constants.CellState playerSymbol);
+        string CreateGame(string username, string sessionId, CellState playerSymbol);
         bool JoinGame(string username, string sessionId);
         void LeaveGame(string username, string sessionId);
         List<string> GetSessionsForUsername(string username);
-        models.Constants.CellState MakeMove(string username, string sessionId, int row, int col);
+        CellState MakeMove(string username, string sessionId, int row, int col);
         PlayerInfo? GetPlayerInfo(string username, string sessionId);
     }
 }
