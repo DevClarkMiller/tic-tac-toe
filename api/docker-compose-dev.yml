@@ -7,4 +7,4 @@ services:
       - "6417:8081"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-    restart: on-failure
+    restart: unless-stopped
