@@ -12,7 +12,7 @@ const Chat = () => {
 	const { messages, sendMessage } = useContext(SessionContext);
 	const { user } = useContext(AppContext);
 
-	const messagesEndRef = useRef<HTMLElement | null>(null);
+	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		if (!messagesEndRef.current) return;
